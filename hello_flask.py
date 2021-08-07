@@ -13,7 +13,7 @@ conn = pymysql.connect(host='localhost',
 
 @app.route('/')
 def initsearch():
-    return render_template('search.html')
+    return render_template('index.html')
 
 
 @app.route('/searchflight', methods=['GET','POST'])
@@ -60,7 +60,7 @@ def showflight():
     cursor.execute(query.format(departure_city,arrive_city))
     data = cursor.fetchall()
     cursor.close()
-    return render_template('flights_info.html', flights=data)
+    return render_template('index.html', flights=data)
 
 
 @app.route('/backtosearch')
