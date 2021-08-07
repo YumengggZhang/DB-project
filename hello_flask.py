@@ -6,13 +6,15 @@ app = Flask(__name__)
 
 # Configure MySQL
 conn = pymysql.connect(host='localhost',
-                               user='root',
-                               password='',
-                               database='airport')
+                       user='root',
+                       password='',
+                       database='airport')  # follows Yumeng's database naming
+
+
 @app.route('/')
 def initsearch():
-
     return render_template('search.html')
+
 
 @app.route('/searchflight', methods=['GET','POST'])
 def searchflight():
