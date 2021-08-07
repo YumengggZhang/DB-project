@@ -1,0 +1,46 @@
+<html>
+<head>
+</head>
+<body>
+
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+<table>
+    <h1>Wish you a good trip</h1>
+
+	<th>flight no.</th>
+	<th>departure city</th>
+    <th>departure airport</th>
+    <th>departure time</th>
+    <th>arrival city</th>
+    <th>arrival airport</th>
+    <th>arrival time</th>
+    <th>price</th>
+
+
+{% for line in flights %}
+	<tr>
+		<td>{{line[0]}}</td>
+		<td>{{line[1]}}</td>
+        <td>{{line[2]}}</td>
+        <td>{{line[3]}}</td>
+        <td>{{line[4]}}</td>
+        <td>{{line[5]}}</td>
+        <td>{{line[6]}}</td>
+        <td>{{line[7]}}</td>
+
+
+	</tr>
+{% endfor %}
+</table>
+
+<a href="/backtosearch">Back</a>
+
+</body>
+
+
+</html>
