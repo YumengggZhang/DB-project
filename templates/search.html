@@ -1,0 +1,19 @@
+<html>
+<head>
+</head>
+<body>
+<form action="/searchflight" method="POST">
+	<h1>Welcome to YZ Airline Ticket Reservation System</h1>
+	<input type="text" name = "From" placeholder="departure city" required/> </br>
+	<input type="text" name = "To" placeholder="arrival city" required/></br>
+	<input type="submit" value = Search />
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
+
+
+</body>
+
+
+</html>
