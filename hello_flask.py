@@ -6,15 +6,13 @@ app = Flask(__name__)
 
 # Configure MySQL
 conn = pymysql.connect(host='localhost',
-                       user='root',
-                       password='',
-                       database='airport')  # follows Yumeng's database naming
-
-
+                               user='root',
+                               password='',
+                               database='airport')
 @app.route('/')
 def initsearch():
-    return render_template('index.html')
 
+    return render_template('index.html')
 
 @app.route('/searchflight', methods=['GET','POST'])
 def searchflight():
@@ -37,21 +35,21 @@ def searchflight():
     # cursor.close()
     # error = None
 
-    if (data):
+    # if (data):
         # see if there's eligible flight
-        return redirect(url_for('showflight'))
+    return redirect(url_for('showflight'))
 
-    else:
+    # else:
         # returns an error message to the html page
-        flash('No eligible flight')
-        return redirect('/')
+        # flash('No eligible flight')
+        # return redirect('/')
 
 @app.route('/showflight')
 def showflight():
     departure_city = session['departure_city']
     arrive_city = session['arrive_city']
     cursor = conn.cursor()
-    query = 'SELECT flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city,\
+    query = 'SELECT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city,\
             arrive_airport,arrival_time,price\
             FROM flight, airport A1, airport A2\
             WHERE flight.depart_airport=A1.name AND flight.arrive_airport=A2.name AND flight_status="upcoming" \
@@ -67,6 +65,60 @@ def showflight():
 def backtosearch():
     session.pop('departure_city')
     session.pop('arrive_city')
+    return redirect('/')
+
+@app.route('/login')
+def login():
+    return render_template('yz_login.html')
+
+
+@app.route('/loginAuth', methods=['GET', 'POST'])
+def loginAuth():
+    user_type = request.form['usertype']
+    username = request.form['username']
+    password = request.form['password']
+
+    cursor = conn.cursor()
+    if user == 'customer':
+        query = "SELECT * FROM customer WHERE email = %s and password = md5(%s)"
+    elif user == 'agent':
+        query = "SELECT * FROM booking_agent WHERE email = %s and password = md5(%s)"
+    elif user == 'staff':
+        query = "SELECT * FROM airline_staff WHERE username = %s and password = md5(%s)"
+
+    cursor.execute(query, (username, password))
+    data = cursor.fetchone()
+    cursor.close()
+
+    if (data):
+        session['username'] = username
+        session['user'] = user
+        if user == 'staff':
+            return redirect(url_for('staff_home'))
+        elif user == 'agent':
+            return redirect(url_for('agent_home'))
+        elif user == 'customer':
+            return redirect(url_for('customer_home'))
+
+    else:
+        flash('Invalid login or username.')
+        return redirect(url_for('init'))
+
+@app.route('/register/customer')
+def register_customer():
+    return render_template('register_customer.html')
+
+@app.route('/register/agent')
+def register_agent():
+    return render_template('register_agent.html')
+
+@app.route('/register/staff')
+def register_staff():
+    return render_template('register_staff.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('username')
     return redirect('/')
 
 app.secret_key = 'some key that you will never guess'
