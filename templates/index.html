@@ -32,6 +32,7 @@
 		{% if flights %}
 			<table>
 
+				<th>Airline</th>
 				<th>Flight no.</th>
 				<th>Departure Location</th>
 			  <th>Departure Time</th>
@@ -42,11 +43,12 @@
 				{% for line in flights %}
 					<tr>
 						<td>{{line[0]}}</td>
-						<td>{{line[2]}}, <b>{{line[1]}}</b></td>
-				    <td>{{line[3]}}</td>
+						<td>{{line[1]}}</td>
+						<td>{{line[3]}}, <b>{{line[2]}}</b></td>
 				    <td>{{line[4]}}</td>
-				    <td>{{line[6]}}, <b>{{line[5]}}</b></td>
-				    <td>{{line[7]}}</td>
+				    <td>{{line[5]}}</td>
+				    <td>{{line[7]}}, <b>{{line[6]}}</b></td>
+				    <td>{{line[8]}}</td>
 					</tr>
 				{% endfor %}
 			</table>
