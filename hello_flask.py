@@ -8,7 +8,7 @@ app = Flask(__name__)
 conn = pymysql.connect(host='localhost',
                                user='root',
                                password='',
-                               database='Airport.co')
+                               database='airport')
 @app.route('/')
 def initsearch():
 
@@ -184,8 +184,8 @@ def registerAuth_agent():
         flash("Registration Done.")
         return redirect(url_for('init'))
 
-@app.route('/register_satff')
-def register_agent():
+@app.route('/register_staff')
+def register_staff():
     return render_template('register_staff.html')
 
 @app.route('/registerAuth_staff', methods=['GET', 'POST'])
@@ -213,10 +213,6 @@ def registerAuth_staff():
         flash("Registration Done.")
         return redirect(url_for('init'))
 
-
-@app.route('/register/staff')
-def register_staff():
-    return render_template('register_staff.html')
 
 @app.route('/logout')
 def logout():
