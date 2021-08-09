@@ -7,9 +7,9 @@
 </head>
 <!--<h3 align="center" style="font-size: 20px;">Sign in</h3>-->
 <form action="/loginAuth" method="POST" style="font-size: 15px;">
-    <input type="radio" name="usertype" value="customer" checked="checked"/>  customer
-    <input type="radio" name="usertype" value="agent" />  booking agent
-    <input type="radio" name="usertype" value="staff" />  airline staff  </br>
+    <input type="radio" name="usertype" value="customer" checked="checked"/>
+    <input type="radio" name="usertype" value="agent" />
+    <input type="radio" name="usertype" value="staff" /> </br>
     <p></p>
     <input type="text" name ="username" placeholder="username/email" required style="font-size:15px" /></br>
     <input type="password" name = "password" placeholder="password" required style="font-size:15px"/></br>
@@ -18,7 +18,7 @@
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <ul class="flashes">
-            {% for message in messages %}u
+            {% for message in messages %}
                 <li>{{ message }}</li>
             {% endfor %}
             </ul>
@@ -26,4 +26,4 @@
     {% endwith %}
 </form>
 <p></p>
-<a href="/register/customer">Doesn't have an account yet? Click to register</a>
+<a href="/register_customer">Doesn't have an account yet? Click to register</a>

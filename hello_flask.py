@@ -8,7 +8,7 @@ app = Flask(__name__)
 conn = pymysql.connect(host='localhost',
                                user='root',
                                password='',
-                               database='airport')
+                               database='Airport.co')
 @app.route('/')
 def initsearch():
 
@@ -81,17 +81,18 @@ def loginAuth():
 
     cursor = conn.cursor()
     if usertype == 'customer':
-        query = "SELECT * FROM customer WHERE email = %s and pass_word = %s"
+        query = "SELECT * FROM customer WHERE email = \'{}\' and pass_word = \'{}\'"
     elif usertype == 'agent':
-        query = "SELECT * FROM booking_agent WHERE email = %s and pass_word = %s"
+        query = "SELECT * FROM booking_agent WHERE email = \'{}\' and pass_word = \'{}\'"
     elif usertype == 'staff':
-        query = "SELECT * FROM airline_staff WHERE username = %s and pass_word = %s"
+        query = "SELECT * FROM airline_staff WHERE username = \'{}\' and pass_word = \'{}\'"
 
-    cursor.execute(query, (username, password))
-    data = cursor.fetchone()
+    cursor.execute(query.format(username, password))
+    userdata = cursor.fetchall()
+
     cursor.close()
 
-    if (data):
+    if userdata:
         session['username'] = username
         session['usertype'] = usertype
         if usertype == 'staff':
@@ -117,13 +118,101 @@ def staff_home():
 def agent_home():
     return render_template('agent_home.html')
 
-@app.route('/register/customer')
+@app.route('/register_customer')
 def register_customer():
     return render_template('register_customer.html')
 
-@app.route('/register/agent')
+@app.route('/registerAuth_C')
+def registerAuth_C():
+    email = request.form['email']
+    password = request.form['password']
+    name = request.form['name']
+    phone = request.form['phone']
+    state = request.form['state']
+    city = request.form['city']
+    street = request.form['street']
+    building = request.form['building']
+    dob = request.form['dob']
+    passport_country = request.form['passport_country']
+    passport_number = request.form['passport_number']
+    expiration_date = request.form['expiration_date']
+
+    cursor = conn.cursor()
+    query = "SELECT COUNT(*) FROM customer WHERE email = \'{}\'"
+    cursor.execute(query.format(email))
+    cdata = cursor.fetchall()
+    if cdata>0: #check if this email has been registered
+        error = "This email has already been registered, please login"
+        return render_template('register_customer.html',error=error)
+
+    else: #Insert customer info into DB
+        cursor = conn.cursor()
+        query_insert = "INSERT INTO customer VALUES(\'{}\', \'{}\', md5(\'{}\'),\
+         \'{}\', \'{}\', \'{}\',\'{}\',\'{}\',\'{}\',\'{}\', \'{}\', \'{}\')"
+        cursor.excute(query_insert.format(email, name, password, building, street, city, state, phone,
+                                          passport_number, expiration_date, passport_country, dob))
+        conn.commit()
+        cursor.close()
+        flash("Registration Done.")
+        return redirect(url_for('/login'))
+
+
+
+@app.route('/register_agent')
 def register_agent():
     return render_template('register_agent.html')
+
+@app.route('/registerAuth_agent', methods=['GET', 'POST'])
+def registerAuth_agent():
+    email = request.form['email']
+    password = request.form['password']
+    id = request.form['agent ID']
+
+    cursor = conn.cursor()
+    query = "SELECT * FROM booking_agent WHERE email = %s"
+    cursor.execute(query, (email))
+    data = cursor.fetchone()
+
+    if(data):
+        error = "This user already exists"
+        return render_template('register_agent.html', error = error)
+    else:
+        ins = "INSERT INTO booking_agent VALUES(%s, md5(%s), %s)"
+        cursor.execute(ins, (email, password, id))
+        conn.commit()
+        cursor.close()
+        flash("Registration Done.")
+        return redirect(url_for('init'))
+
+@app.route('/register_satff')
+def register_agent():
+    return render_template('register_staff.html')
+
+@app.route('/registerAuth_staff', methods=['GET', 'POST'])
+def registerAuth_staff():
+    username = request.form['username']
+    password = request.form['password']
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    dob = request.form['dob']
+    airline = request.form['airline']
+
+    cursor = conn.cursor()
+    query = "SELECT * FROM airline_staff WHERE username = %s"
+    cursor.execute(query, (username))
+    data = cursor.fetchone()
+
+    if(data):
+        error = "This user already exists"
+        return render_template('register_staff.html', error = error)
+    else:
+        ins = "INSERT INTO airline_staff VALUES(%s, md5(%s), %s, %s, %s, %s)"
+        cursor.execute(ins, (username, password, first_name, last_name, dob, airline))
+        conn.commit()
+        cursor.close()
+        flash("Registration Done.")
+        return redirect(url_for('init'))
+
 
 @app.route('/register/staff')
 def register_staff():
