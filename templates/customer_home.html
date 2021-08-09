@@ -63,19 +63,19 @@
 
     <!-- tabs -->
     <div class="tab">
-      <form action="/viewAll">
+      <form action="/cviewAll">
          <button class="tablinks" type="submit">All Flights</button>
       </form>
-      <form action="/viewMy">
+      <form action="/cviewMy">
          <button class="tablinks" type="submit">My Flights</button>
       </form>
-      <form action="/viewStats">
+      <form action="/cviewStats">
          <button class="tablinks" type="submit">Stats</button>
       </form>
     </div>
 
-  
-  {% if view == 'all' %}
+
+  {% if cview == 'all' %}
     <div id="all-flights" class="tabcontent active">
 
       <!-- search column-->
@@ -123,7 +123,7 @@
 
     </div>
 
-  {% elif view == 'my' %}
+  {% elif cview == 'my' %}
 
     <div id="my-flights" class="tabcontent active">
 
@@ -172,7 +172,7 @@
 
     </div>
 
-  {% elif view == 'stats' %}
+  {% elif cview == 'stats' %}
 
     <div id="stats" class="tabcontent active">
       <p>Tokyo is the capital of Japan.</p>
