@@ -81,11 +81,11 @@ def loginAuth():
 
     cursor = conn.cursor()
     if usertype == 'customer':
-        query = "SELECT * FROM customer WHERE email = %s and password = %s"
+        query = "SELECT * FROM customer WHERE email = %s and pass_word = %s"
     elif usertype == 'agent':
-        query = "SELECT * FROM booking_agent WHERE email = %s and password = %s"
+        query = "SELECT * FROM booking_agent WHERE email = %s and pass_word = %s"
     elif usertype == 'staff':
-        query = "SELECT * FROM airline_staff WHERE username = %s and password = %s"
+        query = "SELECT * FROM airline_staff WHERE username = %s and pass_word = %s"
 
     cursor.execute(query, (username, password))
     data = cursor.fetchone()
