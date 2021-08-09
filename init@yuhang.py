@@ -14,6 +14,6 @@ conn = pymysql.connect(host='localhost',
 
 # ------------------------------------------------------------------------------------
 
-@app.route('/')
+@app.route('/customer/searchAll')
 def
 
