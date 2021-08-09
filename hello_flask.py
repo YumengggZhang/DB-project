@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, url_for, redirect, flash
+from flask import Flask, render_template, request, session, url_for, redirect,flash
 import pymysql
 
 # Initialize the app from Flask
@@ -93,7 +93,7 @@ def loginAuth():
 
     if (data):
         session['username'] = username
-        session['user_type'] = usertype
+        session['usertype'] = usertype
         if usertype == 'staff':
             return redirect(url_for('staff_home'))
         elif usertype == 'agent':
@@ -104,6 +104,18 @@ def loginAuth():
     else:
         flash('Invalid login or username.')
         return redirect('/')
+
+@app.route('/customer_home')
+def customer_home():
+    return render_template('customer_home.html')
+
+@app.route('/staff_home')
+def staff_home():
+    return render_template('staff_home.html')
+
+@app.route('/agent_home')
+def agent_home():
+    return render_template('agent_home.html')
 
 @app.route('/register/customer')
 def register_customer():
