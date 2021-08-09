@@ -61,18 +61,20 @@
     <!-- upper left corner: login/register -->
     <p>Welcome, <b>{{username}}</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/logout">Logout</a></p>
 
+    <!-- tabs -->
     <div class="tab">
       <form action="/viewAll">
          <button class="tablinks" type="submit">All Flights</button>
       </form>
-      <form action="/viewAll">
+      <form action="/viewMy">
          <button class="tablinks" type="submit">My Flights</button>
       </form>
-      <form action="/viewAll">
+      <form action="/viewStats">
          <button class="tablinks" type="submit">Stats</button>
       </form>
     </div>
 
+  
   {% if view == 'all' %}
     <div id="all-flights" class="tabcontent active">
 
