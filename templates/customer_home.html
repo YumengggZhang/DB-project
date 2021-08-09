@@ -62,15 +62,22 @@
     <p>Welcome, <b>{{username}}</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/logout">Logout</a></p>
 
     <div class="tab">
-      <button class="tablinks" onclick="openTab(event, 'all-flights')">All Flights</button>
-      <button class="tablinks" onclick="openTab(event, 'my-flights')">My Flights</button>
-      <button class="tablinks" onclick="openTab(event, 'stats')">Stats</button>
+      <form action="/viewAll">
+         <button class="tablinks" type="submit">All Flights</button>
+      </form>
+      <form action="/viewAll">
+         <button class="tablinks" type="submit">My Flights</button>
+      </form>
+      <form action="/viewAll">
+         <button class="tablinks" type="submit">Stats</button>
+      </form>
     </div>
 
-    <div id="all-flights" class="tabcontent">
+  {% if view == 'all' %}
+    <div id="all-flights" class="tabcontent active">
 
       <!-- search column-->
-      <form action="/searchflight" method="POST">
+      <form action="/customer/searchAll" method="POST">
         <h1>Welcome to YZ Airline Ticket Reservation System</h1>
         <input type="text" name="From" placeholder="Departure City" required>
       </br>
@@ -114,17 +121,67 @@
 
     </div>
 
-    <div id="my-flights" class="tabcontent">
-      <p>Paris is the capital of France.</p>
+  {% elif view == 'my' %}
+
+    <div id="my-flights" class="tabcontent active">
+
+      <!-- search column-->
+      <form action="/customer/searchMy" method="POST">
+        <h1>Welcome to YZ Airline Ticket Reservation System</h1>
+        <input type="text" name="From" placeholder="Departure City" required>
+      </br>
+        <input type="text" name="To" placeholder="Arrival City" required>
+      </br>
+        <input type="submit" value="Search">
+
+        {% if error %}
+          <p class="error"><strong>Error:</strong> {{error}}</p>
+        {% endif %}
+      </form>
+
+      <!-- search result -->
+      {% if flights %}
+        <table>
+
+          <th>Airline</th>
+          <th>Flight No.</th>
+          <th>Departure</th>
+          <th>Arrival</th>
+          <th>Price</th>
+
+          {% for line in flights %}
+            <tr>
+              <td>{{line[0]}}</td>
+              <td>{{line[1]}}</td>
+              <td>{{line[3]}}, <b>{{line[2]}}</b>
+                <br>
+                {{line[4]}}
+              </td>
+              <td>{{line[6]}}, <b>{{line[5]}}</b>
+                <br>
+                {{line[7]}}
+              </td>
+              <td>{{line[8]}}</td>
+            </tr>
+          {% endfor %}
+
+        </table>
+      {% endif %}
+
     </div>
 
-    <div id="stats" class="tabcontent">
+  {% elif view == 'stats' %}
+
+    <div id="stats" class="tabcontent active">
       <p>Tokyo is the capital of Japan.</p>
     </div>
 
+  {% endif %}
+
   </body>
 
-  <script>
+  <!-- <script>
+
   function openTab(evt, tabName) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
@@ -138,6 +195,6 @@
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
   }
-  </script>
+  </script> -->
 
 </html>
