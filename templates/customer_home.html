@@ -64,19 +64,31 @@
     <!-- tabs -->
     <div class="tab">
       <form action="/cviewAll">
-         <button class="tablinks" type="submit">All Flights</button>
+        {% if cview == 'all' %}
+          <button class="tablinks active" type="submit">All Flights</button>
+        {% else %}
+          <button class="tablinks" type="submit">All Flights</button>
+        {% endif %}
       </form>
       <form action="/cviewMy">
-         <button class="tablinks" type="submit">My Flights</button>
+        {% if cview == 'my' %}
+          <button class="tablinks active" type="submit">My Flights</button>
+        {% else %}
+          <button class="tablinks" type="submit">My Flights</button>
+        {% endif %}
       </form>
       <form action="/cviewStats">
-         <button class="tablinks" type="submit">Stats</button>
+        {% if cview == 'stats' %}
+          <button class="tablinks active" type="submit">Stats</button>
+        {% else %}
+          <button class="tablinks" type="submit">Stats</button>
+        {% endif %}
       </form>
     </div>
 
 
   {% if cview == 'all' %}
-    <div id="all-flights" class="tabcontent active">
+    <div id="all-flights" class="tabcontent" style="display: block;">
 
       <!-- search column-->
       <form action="/customer/searchAll" method="POST">
@@ -125,7 +137,7 @@
 
   {% elif cview == 'my' %}
 
-    <div id="my-flights" class="tabcontent active">
+    <div id="my-flights" class="tabcontent" style="display: block;">
 
       <!-- search column-->
       <form action="/customer/searchMy" method="POST">
@@ -174,7 +186,7 @@
 
   {% elif cview == 'stats' %}
 
-    <div id="stats" class="tabcontent active">
+    <div id="stats" class="tabcontent" style="display: block;">
       <p>Tokyo is the capital of Japan.</p>
     </div>
 

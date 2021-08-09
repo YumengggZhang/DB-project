@@ -227,6 +227,44 @@ def registerAuth_staff():
         return redirect(url_for('init'))
 
 
+@app.route('/cviewAll')
+def cview_all():
+    # return redirect(url_for(customer_home), cview='all')
+    return render_template('customer_home.html', username=session['nickname'], cview='all')
+
+
+@app.route('/customer/searchAll', methods=['GET', 'POST'])
+def customer_search_all():
+    departure_city = request.form['From']
+    arrive_city = request.form['To']
+    session['departure_city'] = departure_city
+    session['arrive_city'] = arrive_city
+    
+    departure_city = session['departure_city']
+    arrive_city = session['arrive_city']
+    cursor = conn.cursor()
+    query = 'SELECT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city,\
+            arrive_airport,arrival_time,price\
+            FROM flight, airport A1, airport A2\
+            WHERE flight.depart_airport=A1.name AND flight.arrive_airport=A2.name AND flight_status="upcoming" \
+            AND A1.city=\'{}\' and A2.city = \'{}\' \
+            ORDER BY departure_time'
+    cursor.execute(query.format(departure_city, arrive_city))
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template('customer_home.html', username=session['nickname'], cview='all', flights=data)
+
+
+@app.route('/cviewMy')
+def cview_my():
+    return render_template('customer_home.html', username=session['nickname'], cview='my')
+
+
+@app.route('/cviewStats')
+def cview_stats():
+    return render_template('customer_home.html', username=session['nickname'], cview='stats')
+
+
 @app.route('/logout')
 def logout():
     session.pop('username')
