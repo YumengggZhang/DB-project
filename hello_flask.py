@@ -81,11 +81,11 @@ def loginAuth():
 
     cursor = conn.cursor()
     if usertype == 'customer':
-        query = "SELECT * FROM customer WHERE email = \'{}\' and pass_word = \'{}\'"
+        query = "SELECT * FROM customer WHERE email = \'{}\' and pass_word = md5(\'{}\')"
     elif usertype == 'agent':
-        query = "SELECT * FROM booking_agent WHERE email = \'{}\' and pass_word = \'{}\'"
+        query = "SELECT * FROM booking_agent WHERE email = \'{}\' and pass_word = md5(\'{}\')"
     elif usertype == 'staff':
-        query = "SELECT * FROM airline_staff WHERE username = \'{}\' and pass_word = \'{}\'"
+        query = "SELECT * FROM airline_staff WHERE username = \'{}\' and pass_word = md5(\'{}\')"
 
     cursor.execute(query.format(username, password))
     userdata = cursor.fetchall()
@@ -148,7 +148,7 @@ def registerAuth_C():
     else: #Insert customer info into DB
         cursor = conn.cursor()
         query_insert = "INSERT INTO customer VALUES(\'{}\', \'{}\', md5(\'{}\'),\
-         \'{}\', \'{}\', \'{}\',\'{}\',\'{}\',\'{}\',\'{}\', \'{}\', \'{}\')"
+         \'{}\', \'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\', \'{}\', \'{}\')"
         cursor.excute(query_insert.format(email, name, password, building, street, city, state, phone,
                                           passport_number, expiration_date, passport_country, dob))
         conn.commit()
@@ -169,23 +169,23 @@ def registerAuth_agent():
     id = request.form['agent ID']
 
     cursor = conn.cursor()
-    query = "SELECT * FROM booking_agent WHERE email = %s"
-    cursor.execute(query, (email))
-    data = cursor.fetchone()
+    query = "SELECT COUNT(*) FROM booking_agent WHERE email = \'{}\'"
+    cursor.execute(query.format(email))
+    adata = cursor.fetchone()
 
-    if(data):
-        error = "This user already exists"
-        return render_template('register_agent.html', error = error)
+    if adata>0: #check if this email has been registered
+        error = "This email has already been registered, please login"
+        return render_template('register_agent.html', error=error)
     else:
-        ins = "INSERT INTO booking_agent VALUES(%s, md5(%s), %s)"
-        cursor.execute(ins, (email, password, id))
+        insert_query = "INSERT INTO booking_agent VALUES(\'{}\', md5(\'{}\'), \'{}\')"
+        cursor.execute(insert_query.format(email, password, id))
         conn.commit()
         cursor.close()
         flash("Registration Done.")
-        return redirect(url_for('init'))
+        return redirect(url_for('/login'))
 
-@app.route('/register_satff')
-def register_agent():
+@app.route('/register/staff')
+def register_staff():
     return render_template('register_staff.html')
 
 @app.route('/registerAuth_staff', methods=['GET', 'POST'])
@@ -198,25 +198,21 @@ def registerAuth_staff():
     airline = request.form['airline']
 
     cursor = conn.cursor()
-    query = "SELECT * FROM airline_staff WHERE username = %s"
-    cursor.execute(query, (username))
-    data = cursor.fetchone()
+    query = "SELECT COUNt(*) FROM airline_staff WHERE username = \'{}\'"
+    cursor.execute(query.format(username))
+    sdata = cursor.fetchone()
 
-    if(data):
-        error = "This user already exists"
-        return render_template('register_staff.html', error = error)
+    if sdata>0: #check if this email has been registered
+        error = "This username has already been registered, please login"
+        return render_template('register_staff.html',error=error)
     else:
-        ins = "INSERT INTO airline_staff VALUES(%s, md5(%s), %s, %s, %s, %s)"
-        cursor.execute(ins, (username, password, first_name, last_name, dob, airline))
+        insert_query = "INSERT INTO airline_staff VALUES(\'{}\', md5(\'{}\'), \'{}\', \'{}\', \'{}\', \'{}\')"
+        cursor.execute(insert_query, (username, password, first_name, last_name, dob, airline))
         conn.commit()
         cursor.close()
         flash("Registration Done.")
-        return redirect(url_for('init'))
+        return redirect(url_for('/login'))
 
-
-@app.route('/register/staff')
-def register_staff():
-    return render_template('register_staff.html')
 
 @app.route('/logout')
 def logout():
