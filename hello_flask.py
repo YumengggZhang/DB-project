@@ -72,18 +72,19 @@ def login():
     return render_template('yz_login.html')
 
 
+
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
-    user_type = request.form['usertype']
+    usertype = request.form['usertype']
     username = request.form['username']
     password = request.form['password']
 
     cursor = conn.cursor()
-    if user == 'customer':
+    if usertype == 'customer':
         query = "SELECT * FROM customer WHERE email = %s and password = md5(%s)"
-    elif user == 'agent':
+    elif usertype == 'agent':
         query = "SELECT * FROM booking_agent WHERE email = %s and password = md5(%s)"
-    elif user == 'staff':
+    elif usertype == 'staff':
         query = "SELECT * FROM airline_staff WHERE username = %s and password = md5(%s)"
 
     cursor.execute(query, (username, password))
@@ -92,17 +93,17 @@ def loginAuth():
 
     if (data):
         session['username'] = username
-        session['user'] = user
-        if user == 'staff':
+        session['user_type'] = usertype
+        if usertype == 'staff':
             return redirect(url_for('staff_home'))
-        elif user == 'agent':
+        elif usertype == 'agent':
             return redirect(url_for('agent_home'))
-        elif user == 'customer':
+        elif usertype == 'customer':
             return redirect(url_for('customer_home'))
 
     else:
         flash('Invalid login or username.')
-        return redirect(url_for('init'))
+        return redirect('/')
 
 @app.route('/register/customer')
 def register_customer():
