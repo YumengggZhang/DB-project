@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, url_for, redirect,flash
+from flask import Flask, render_template, request, session, url_for, redirect, flash
 import pymysql
 
 # Initialize the app from Flask
@@ -9,12 +9,14 @@ conn = pymysql.connect(host='localhost',
                                user='root',
                                password='',
                                database='airport')
+
+
 @app.route('/')
 def initsearch():
-
     return render_template('index.html')
 
-@app.route('/searchflight', methods=['GET','POST'])
+
+@app.route('/searchflight', methods=['GET', 'POST'])
 def searchflight():
     departure_city = request.form['From']
     arrive_city = request.form['To']
@@ -44,6 +46,7 @@ def searchflight():
         # flash('No eligible flight')
         # return redirect('/')
 
+
 @app.route('/showflight')
 def showflight():
     departure_city = session['departure_city']
@@ -55,7 +58,7 @@ def showflight():
             WHERE flight.depart_airport=A1.name AND flight.arrive_airport=A2.name AND flight_status="upcoming" \
             AND A1.city=\'{}\' and A2.city = \'{}\' \
             ORDER BY departure_time'
-    cursor.execute(query.format(departure_city,arrive_city))
+    cursor.execute(query.format(departure_city, arrive_city))
     data = cursor.fetchall()
     cursor.close()
     return render_template('index.html', flights=data)
@@ -67,10 +70,10 @@ def backtosearch():
     session.pop('arrive_city')
     return redirect('/')
 
+
 @app.route('/login')
 def login():
     return render_template('yz_login.html')
-
 
 
 @app.route('/loginAuth', methods=['GET', 'POST'])
@@ -89,12 +92,15 @@ def loginAuth():
 
     cursor.execute(query.format(username, password))
     userdata = cursor.fetchall()
-
+    print(userdata)
     cursor.close()
 
     if userdata:
         session['username'] = username
         session['usertype'] = usertype
+
+        session['nickname'] = userdata[0][1]  # refers to the 'name' attribute, used for home page
+
         if usertype == 'staff':
             return redirect(url_for('staff_home'))
         elif usertype == 'agent':
@@ -106,21 +112,26 @@ def loginAuth():
         flash('Invalid login or username.')
         return redirect('/')
 
+
 @app.route('/customer_home')
 def customer_home():
-    return render_template('customer_home.html')
+    return render_template('customer_home.html', username=session['nickname'])
+
 
 @app.route('/staff_home')
 def staff_home():
     return render_template('staff_home.html')
 
+
 @app.route('/agent_home')
 def agent_home():
     return render_template('agent_home.html')
 
+
 @app.route('/register_customer')
 def register_customer():
     return render_template('register_customer.html')
+
 
 @app.route('/registerAuth_C')
 def registerAuth_C():
@@ -157,10 +168,10 @@ def registerAuth_C():
         return redirect(url_for('/login'))
 
 
-
 @app.route('/register_agent')
 def register_agent():
     return render_template('register_agent.html')
+
 
 @app.route('/registerAuth_agent', methods=['GET', 'POST'])
 def registerAuth_agent():
@@ -175,7 +186,7 @@ def registerAuth_agent():
 
     if(data):
         error = "This user already exists"
-        return render_template('register_agent.html', error = error)
+        return render_template('register_agent.html', error=error)
     else:
         ins = "INSERT INTO booking_agent VALUES(%s, md5(%s), %s)"
         cursor.execute(ins, (email, password, id))
@@ -184,9 +195,11 @@ def registerAuth_agent():
         flash("Registration Done.")
         return redirect(url_for('init'))
 
+
 @app.route('/register_staff')
 def register_staff():
     return render_template('register_staff.html')
+
 
 @app.route('/registerAuth_staff', methods=['GET', 'POST'])
 def registerAuth_staff():
@@ -204,7 +217,7 @@ def registerAuth_staff():
 
     if(data):
         error = "This user already exists"
-        return render_template('register_staff.html', error = error)
+        return render_template('register_staff.html', error=error)
     else:
         ins = "INSERT INTO airline_staff VALUES(%s, md5(%s), %s, %s, %s, %s)"
         cursor.execute(ins, (username, password, first_name, last_name, dob, airline))
@@ -218,6 +231,7 @@ def registerAuth_staff():
 def logout():
     session.pop('username')
     return redirect('/')
+
 
 app.secret_key = 'some key that you will never guess'
 
