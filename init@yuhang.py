@@ -14,6 +14,17 @@ conn = pymysql.connect(host='localhost',
 
 # ------------------------------------------------------------------------------------
 
-@app.route('/customer/searchAll')
-def
 
+@app.route('/cviewAll')
+def cview_all():
+    return render_template('customer_home.html', cview='all')
+
+
+@app.route('/cviewMy')
+def cview_my():
+    return render_template('customer_home.html', cview='my')
+
+
+@app.route('/cviewStats')
+def cview_stats():
+    return render_template('customer_home.html', cview='stats')

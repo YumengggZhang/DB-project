@@ -63,20 +63,35 @@
 
     <!-- tabs -->
     <div class="tab">
+      {% if cview == 'all' %}
+        <button class="tablinks active" type="submit">All Flights</button>
+      {% else %}
       <form action="/cviewAll">
-         <button class="tablinks" type="submit">All Flights</button>
+        <button class="tablinks" type="submit">All Flights</button>
       </form>
+      {% endif %}
+
+      {% if cview == 'my' %}
+        <button class="tablinks active" type="submit">My Flights</button>
+      {% else %}
       <form action="/cviewMy">
-         <button class="tablinks" type="submit">My Flights</button>
+        <button class="tablinks" type="submit">My Flights</button>
       </form>
+      {% endif %}
+
+      {% if cview == 'stats' %}
+        <button class="tablinks active" type="submit">Stats</button>
+      {% else %}
       <form action="/cviewStats">
-         <button class="tablinks" type="submit">Stats</button>
+        <button class="tablinks" type="submit">Stats</button>
       </form>
+      {% endif %}
+
     </div>
 
 
   {% if cview == 'all' %}
-    <div id="all-flights" class="tabcontent active">
+    <div id="all-flights" class="tabcontent" style="display: block;">
 
       <!-- search column-->
       <form action="/customer/searchAll" method="POST">
@@ -101,6 +116,7 @@
           <th>Departure</th>
           <th>Arrival</th>
           <th>Price</th>
+          <th>Action</th>
 
           {% for line in flights %}
             <tr>
@@ -115,6 +131,7 @@
                 {{line[7]}}
               </td>
               <td>{{line[8]}}</td>
+              <td><a href="/customer/purchase">Purchase</a></td>
             </tr>
           {% endfor %}
 
@@ -125,7 +142,7 @@
 
   {% elif cview == 'my' %}
 
-    <div id="my-flights" class="tabcontent active">
+    <div id="my-flights" class="tabcontent" style="display: block;">
 
       <!-- search column-->
       <form action="/customer/searchMy" method="POST">
@@ -174,7 +191,7 @@
 
   {% elif cview == 'stats' %}
 
-    <div id="stats" class="tabcontent active">
+    <div id="stats" class="tabcontent" style="display: block;">
       <p>Tokyo is the capital of Japan.</p>
     </div>
 
