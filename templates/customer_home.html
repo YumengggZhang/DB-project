@@ -63,27 +63,30 @@
 
     <!-- tabs -->
     <div class="tab">
+      {% if cview == 'all' %}
+        <button class="tablinks active" type="submit">All Flights</button>
+      {% else %}
       <form action="/cviewAll">
-        {% if cview == 'all' %}
-          <button class="tablinks active" type="submit">All Flights</button>
-        {% else %}
-          <button class="tablinks" type="submit">All Flights</button>
-        {% endif %}
+        <button class="tablinks" type="submit">All Flights</button>
       </form>
+      {% endif %}
+
+      {% if cview == 'my' %}
+        <button class="tablinks active" type="submit">My Flights</button>
+      {% else %}
       <form action="/cviewMy">
-        {% if cview == 'my' %}
-          <button class="tablinks active" type="submit">My Flights</button>
-        {% else %}
-          <button class="tablinks" type="submit">My Flights</button>
-        {% endif %}
+        <button class="tablinks" type="submit">My Flights</button>
       </form>
+      {% endif %}
+
+      {% if cview == 'stats' %}
+        <button class="tablinks active" type="submit">Stats</button>
+      {% else %}
       <form action="/cviewStats">
-        {% if cview == 'stats' %}
-          <button class="tablinks active" type="submit">Stats</button>
-        {% else %}
-          <button class="tablinks" type="submit">Stats</button>
-        {% endif %}
+        <button class="tablinks" type="submit">Stats</button>
       </form>
+      {% endif %}
+
     </div>
 
 
@@ -113,6 +116,7 @@
           <th>Departure</th>
           <th>Arrival</th>
           <th>Price</th>
+          <th>Action</th>
 
           {% for line in flights %}
             <tr>
@@ -127,6 +131,7 @@
                 {{line[7]}}
               </td>
               <td>{{line[8]}}</td>
+              <td><a href="/customer/purchase">Purchase</a></td>
             </tr>
           {% endfor %}
 
