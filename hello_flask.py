@@ -13,6 +13,7 @@ conn = pymysql.connect(host='localhost',
 
 @app.route('/')
 def initsearch():
+    session.clear()
     return render_template('index.html')
 
 
@@ -70,24 +71,44 @@ def backtosearch():
     session.pop('arrive_city')
     return redirect('/')
 
-
+#---------------------------------------LOGIN------------------------------------------------------
 @app.route('/login')
 def login():
-    return render_template('yz_login.html')
+    return render_template('login.html')
+
+@app.route('/login_customer')
+def login_customer():
+    return render_template('login.html',login='customer')
+
+@app.route('/login_agent')
+def login_agent():
+    return render_template('login.html',login='agent')
+
+@app.route('/login_staff')
+def login_staff():
+    return render_template('login.html',login='staff')
 
 
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
-    usertype = request.form['usertype']
-    username = request.form['username']
-    password = request.form['password']
+    # if request.method =='GET':
+    #     return render_template('register.html')
+    # if request.method == 'POST':
+        # usertype = request.form['usertype']
+    username = request.form.get("username")
+    password = request.form.get('password')
+    agent_id = request.form.get('agent_id')
+    # print(username,password,agent_id)
+
+    airline = request.form.get('airline')
+
 
     cursor = conn.cursor()
-    if usertype == 'customer':
+    if (not agent_id) and (not airline):
         query = "SELECT * FROM customer WHERE email = \'{}\' and pass_word = \'{}\'"
-    elif usertype == 'agent':
+    elif agent_id:
         query = "SELECT * FROM booking_agent WHERE email = \'{}\' and pass_word = \'{}\'"
-    elif usertype == 'staff':
+    elif airline:
         query = "SELECT * FROM airline_staff WHERE username = \'{}\' and pass_word = \'{}\'"
 
     cursor.execute(query.format(username, password))
@@ -97,22 +118,24 @@ def loginAuth():
 
     if userdata:
         session['username'] = username
-        session['usertype'] = usertype
+        # session['usertype'] = usertype
 
         session['nickname'] = userdata[0][1]  # refers to the 'name' attribute, used for home page
 
-        if usertype == 'staff':
-            return redirect(url_for('staff_home'))
-        elif usertype == 'agent':
+        if (not agent_id) and (not airline):
+            return redirect(url_for('customer_home'))
+        elif agent_id:
+            session['agent_id'] = agent_id
             return redirect(url_for('agent_home'))
-        elif usertype == 'customer':
+        elif airline:
+            session['airline'] = airline
             return redirect(url_for('customer_home'))
 
     else:
         flash('Invalid login or username.')
         return redirect('/')
 
-
+#------------------------------------ HOME PAGE-----------------------------------------------
 @app.route('/customer_home')
 def customer_home():
     return render_template('customer_home.html', username=session['nickname'])
@@ -120,18 +143,29 @@ def customer_home():
 
 @app.route('/staff_home')
 def staff_home():
-    return render_template('staff_home.html')
+    return render_template('staff_home.html', username=session['nickname'])
 
 
 @app.route('/agent_home')
 def agent_home():
-    return render_template('agent_home.html')
+    return render_template('agent_home.html', username=session['nickname'])
 
+#----------------------------------------REGISTER----------------------------------------------
+@app.route('/register')
+def register():
+    return render_template('register.html')
 
 @app.route('/register_customer')
 def register_customer():
-    return render_template('register_customer.html')
+    return render_template('register.html', register='customer')
 
+@app.route('/register_agent')
+def register_agent():
+    return render_template('register.html', register='agent')
+
+@app.route('/register_staff')
+def register_staff():
+    return render_template('register.html', register='staff')
 
 @app.route('/registerAuth_C')
 def registerAuth_C():
@@ -154,7 +188,7 @@ def registerAuth_C():
     cdata = cursor.fetchall()
     if cdata>0: #check if this email has been registered
         error = "This email has already been registered, please login"
-        return render_template('register_customer.html',error=error)
+        return render_template('register.html',error=error)
 
     else: #Insert customer info into DB
         cursor = conn.cursor()
@@ -164,16 +198,12 @@ def registerAuth_C():
                                           passport_number, expiration_date, passport_country, dob))
         conn.commit()
         cursor.close()
-        flash("Registration Done.")
+        # flash("Registration Done.")
         return redirect(url_for('/login'))
 
 
-@app.route('/register_agent')
-def register_agent():
-    return render_template('register_agent.html')
 
-
-@app.route('/registerAuth_agent', methods=['GET', 'POST'])
+@app.route('/registerAuth_A', methods=['GET', 'POST'])
 def registerAuth_agent():
     email = request.form['email']
     password = request.form['password']
@@ -186,21 +216,17 @@ def registerAuth_agent():
 
     if adata>0: #check if this email has been registered
         error = "This email has already been registered, please login"
-        return render_template('register_agent.html', error=error)
+        return render_template('register.html', error=error,register='agent')
     else:
         insert_query = "INSERT INTO booking_agent VALUES(\'{}\', md5(\'{}\'), \'{}\')"
         cursor.execute(insert_query.format(email, password, id))
         conn.commit()
         cursor.close()
-        flash("Registration Done.")
+        # flash("Registration Done.")
         return redirect(url_for('/login'))
 
-@app.route('/register/staff')
-def register_staff():
-    return render_template('register_staff.html')
 
-
-@app.route('/registerAuth_staff', methods=['GET', 'POST'])
+@app.route('/registerAuth_S', methods=['GET', 'POST'])
 def registerAuth_staff():
     username = request.form['username']
     password = request.form['password']
@@ -209,6 +235,7 @@ def registerAuth_staff():
     dob = request.form['dob']
     airline = request.form['airline']
 
+
     cursor = conn.cursor()
     query = "SELECT COUNt(*) FROM airline_staff WHERE username = \'{}\'"
     cursor.execute(query.format(username))
@@ -216,13 +243,13 @@ def registerAuth_staff():
 
     if sdata>0: #check if this email has been registered
         error = "This username has already been registered, please login"
-        return render_template('register_staff.html',error=error)
+        return render_template('register.html',error=error,register='staff')
     else:
         insert_query = "INSERT INTO airline_staff VALUES(\'{}\', md5(\'{}\'), \'{}\', \'{}\', \'{}\', \'{}\')"
         cursor.execute(insert_query, (username, password, first_name, last_name, dob, airline))
         conn.commit()
         cursor.close()
-        flash("Registration Done.")
+        # flash("Registration Done.")
         return redirect(url_for('/login'))
 
 
@@ -234,6 +261,87 @@ def cview_all():
 
 @app.route('/customer/searchAll', methods=['GET', 'POST'])
 def customer_search_all():
+    if request.method == 'GET':
+        departure_city = request.form['From']
+        arrive_city = request.form['To']
+        session['departure_city'] = departure_city
+        session['arrive_city'] = arrive_city
+
+        departure_city = session['departure_city']
+        arrive_city = session['arrive_city']
+        cursor = conn.cursor()
+        query = 'SELECT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city,\
+                arrive_airport,arrival_time,price\
+                FROM flight, airport A1, airport A2\
+                WHERE flight.depart_airport=A1.name AND flight.arrive_airport=A2.name AND flight_status="upcoming" \
+                AND A1.city=\'{}\' and A2.city = \'{}\' \
+                ORDER BY departure_time'
+        cursor.execute(query.format(departure_city, arrive_city))
+        data = cursor.fetchall()
+        cursor.close()
+        return render_template('customer_home.html', username=session['nickname'], cview='all', flights=data)
+
+@app.route('/customer/purchase', methods=['GET', 'POST'])
+def customer_purchase():
+    pass
+    # departure_city = request.form['From']
+    # arrive_city = request.form['To']
+    # session['departure_city'] = departure_city
+    # session['arrive_city'] = arrive_city
+    #
+    # departure_city = session['departure_city']
+    # arrive_city = session['arrive_city']
+    # cursor = conn.cursor()
+    # query = 'SELECT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city,\
+    #         arrive_airport,arrival_time,price\
+    #         FROM flight, airport A1, airport A2\
+    #         WHERE flight.depart_airport=A1.name AND flight.arrive_airport=A2.name AND flight_status="upcoming" \
+    #         AND A1.city=\'{}\' and A2.city = \'{}\' \
+    #         ORDER BY departure_time'
+    # cursor.execute(query.format(departure_city, arrive_city))
+    # data = cursor.fetchall()
+    # cursor.close()
+    # return render_template('customer_home.html', username=session['nickname'], cview='all', flights=data)
+
+
+
+
+@app.route('/cviewMy')
+def cview_my():
+    return render_template('customer_home.html', username=session['nickname'], cview='my')
+
+@app.route('/customer/searchMy', methods=['GET', 'POST'])
+def customer_search_my():
+    if
+    username= session['username']
+    cursor = conn.cursor()
+    query = 'SELECT DISTINCT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city,\
+            arrive_airport,arrival_time,price\
+            FROM flight NATURAL JOIN Ticket NATURAL JOIN purchases, airport A1, airport A2\
+            WHERE flight.depart_airport=A1.name AND flight.arrive_airport=A2.name AND flight_status="upcoming"\
+            AND customer_email=\'{}\' \
+            ORDER BY departure_time'
+    cursor.execute(query.format(username))
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template('customer_home.html', username=session['nickname'], cview='my', flights=data)
+
+
+
+
+@app.route('/cviewStats')
+def cview_stats():
+    return render_template('customer_home.html', username=session['nickname'], cview='stats')
+#------------------------------------Agent-----------------------------------------
+
+@app.route('/aviewAll')
+def aview_all():
+    # return redirect(url_for(customer_home), cview='all')
+    return render_template('agent_home.html', username=session['nickname'], aview='all')
+
+
+@app.route('/agent/searchAll', methods=['GET', 'POST'])
+def agent_search_all():
     departure_city = request.form['From']
     arrive_city = request.form['To']
     session['departure_city'] = departure_city
@@ -251,23 +359,23 @@ def customer_search_all():
     cursor.execute(query.format(departure_city, arrive_city))
     data = cursor.fetchall()
     cursor.close()
-    return render_template('customer_home.html', username=session['nickname'], cview='all', flights=data)
+    return render_template('customer_home.html', username=session['nickname'], aview='all', flights=data)
 
 
-@app.route('/cviewMy')
-def cview_my():
-    return render_template('customer_home.html', username=session['nickname'], cview='my')
+@app.route('/aviewMy')
+def aview_my():
+    return render_template('agent_home.html', username=session['nickname'], aview='my')
 
 
-@app.route('/cviewStats')
-def cview_stats():
-    return render_template('customer_home.html', username=session['nickname'], cview='stats')
-
+@app.route('/aviewStats')
+def aview_stats():
+    return render_template('agent_home.html', username=session['nickname'], aview='stats')
 
 @app.route('/logout')
 def logout():
     session.pop('username')
     return redirect('/')
+
 
 
 app.secret_key = 'some key that you will never guess'

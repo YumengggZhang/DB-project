@@ -59,7 +59,7 @@
   <body>
 
     <!-- upper left corner: login/register -->
-    <p>Welcome, <b>{{username}}</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/logout">Logout</a></p>
+    <p>Welcome back,<b>{{username}}</b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/logout">Logout</a></p>
 
     <!-- tabs -->
     <div class="tab">
@@ -88,14 +88,14 @@
       {% endif %}
 
     </div>
-
+<!--—————————————————————————————————————————————————TAB ALL——————————————————————————————————————————————————-->
 
   {% if cview == 'all' %}
     <div id="all-flights" class="tabcontent" style="display: block;">
 
       <!-- search column-->
       <form action="/customer/searchAll" method="POST">
-        <h1>Welcome to YZ Airline Ticket Reservation System</h1>
+        <h3>Search for All upcoming flights</h3>
         <input type="text" name="From" placeholder="Departure City" required>
       </br>
         <input type="text" name="To" placeholder="Arrival City" required>
@@ -107,6 +107,7 @@
         {% endif %}
       </form>
 
+
       <!-- search result -->
       {% if flights %}
         <table>
@@ -116,7 +117,7 @@
           <th>Departure</th>
           <th>Arrival</th>
           <th>Price</th>
-          <th>Action</th>
+<!--          <th>Action</th>-->
 
           {% for line in flights %}
             <tr>
@@ -131,32 +132,43 @@
                 {{line[7]}}
               </td>
               <td>{{line[8]}}</td>
-              <td><a href="/customer/purchase">Purchase</a></td>
+<!--              <td><a href="/customer/purchase">Purchase</a></td>-->
             </tr>
           {% endfor %}
 
         </table>
       {% endif %}
+    <!--purchase tickets-->
+      <p></p>
+      <label>Chooes a flight to purchase:
+      <input list="flight_num_list" name="myBrowser" /></label>
+      <datalist id="flight_num_list">
+       {% for i in departure_city %}
+      <option>{{ i }}</option>
+       {% endfor %}
+      </datalist>
 
     </div>
+
+<!--———————————————————————————————————————————TAB MY———————————————————————————————————————————————————————-->
 
   {% elif cview == 'my' %}
 
     <div id="my-flights" class="tabcontent" style="display: block;">
-
+    <h3>my purchase history</h3>
       <!-- search column-->
-      <form action="/customer/searchMy" method="POST">
-        <h1>Welcome to YZ Airline Ticket Reservation System</h1>
-        <input type="text" name="From" placeholder="Departure City" required>
-      </br>
-        <input type="text" name="To" placeholder="Arrival City" required>
-      </br>
-        <input type="submit" value="Search">
+<!--      <form action="/customer/searchMy" method="POST">-->
+<!--        <h3>Search for my purchase history</h3>-->
+<!--        <input type="text" name="From" placeholder="Departure City" required>-->
+<!--      </br>-->
+<!--        <input type="text" name="To" placeholder="Arrival City" required>-->
+<!--      </br>-->
+<!--        <input type="submit" value="Search">-->
 
-        {% if error %}
-          <p class="error"><strong>Error:</strong> {{error}}</p>
-        {% endif %}
-      </form>
+<!--        {% if error %}-->
+<!--          <p class="error"><strong>Error:</strong> {{error}}</p>-->
+<!--        {% endif %}-->
+<!--      </form>-->
 
       <!-- search result -->
       {% if flights %}
@@ -188,7 +200,7 @@
       {% endif %}
 
     </div>
-
+<!--——————————————————————————————————————————TAB STATS————————————————————————————————————————————————-->
   {% elif cview == 'stats' %}
 
     <div id="stats" class="tabcontent" style="display: block;">

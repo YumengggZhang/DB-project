@@ -59,27 +59,41 @@
   <body>
 
     <!-- upper left corner: login/register -->
-    <h2>Join YZ Airline for Pleasant Journey&nbsp;&nbsp;&nbsp;&nbsp;</h2>
+    <h2>Join YZ Airline for Pleasant Journey</h2>
 
     <!-- tabs -->
     <div class="tab">
-      <form action="/registerCustomer">
-         <button class="tablinks" type="submit">Register customer account</button>
+      {% if register == 'customer' %}
+        <button class="tablinks active" type="submit">Customer Register</button>
+      {% else %}
+      <form action="/register_customer">
+        <button class="tablinks" type="submit">Customer Register</button>
       </form>
-      <form action="/registerStaff">
-         <button class="tablinks" type="submit">Register staff account</button>
+      {% endif %}
+
+      {% if register == 'agent' %}
+        <button class="tablinks active" type="submit">Agent Register</button>
+      {% else %}
+      <form action="/register_agent">
+        <button class="tablinks" type="submit">Agent Register</button>
       </form>
-      <form action="/RegisterAgent">
-         <button class="tablinks" type="submit">Register agency account</button>
+      {% endif %}
+
+      {% if register == 'staff' %}
+        <button class="tablinks active" type="submit">Staff Register</button>
+      {% else %}
+      <form action="/register_staff">
+        <button class="tablinks" type="submit">Staff Register</button>
       </form>
+      {% endif %}
+
     </div>
 
 
   {% if register == 'customer' %}
-    <div id="register-C" class="tabcontent active">
+    <div id="register-C" class="tabcontent" style="display: block;">
 
-        <form action="/registerAuth_C" method="POST">
-
+        <form action="/registerAuth_C" method="POST"></br>
         <label style="font-size:15px">E-mail:</label></br>
         <input type="text" name = "email" required style="font-size:15px"/></br>
         <label style="font-size:15px">Password:</label></br>
@@ -104,17 +118,17 @@
         <input type="text" name = "passport_number" required style="font-size:15px"/></br>
         <label style="font-size:15px">Passport Expiration Date:</label></br>
         <input type="date" name = "expiration_date" /></br>
-        <input type="submit" value="Search">
+        <input type="submit" value="Register">
         {% if error %}
           <p class="error"><strong>Error:</strong> {{error}}</p>
         {% endif %}
       </form>
     </div>
-    <p><a href="/goback">Go Back</a> </p>
+    <p><a href="/">Go Back</a> </p>
 
-  {% if register == 'staff' %}
-    <div id=register-S class="tabcontent active">
-        <form action="/registerAuth_staff" method="POST"></form>
+  {% elif register == 'staff' %}
+    <div id=register-S class="tabcontent" style="display: block;">
+        <form action="/registerAuth_S" method="POST"></form>
             <label style="font-size:15px">Username:</label></br>
             <input type=text" name = "username" placeholder="username" required style="font-size:15px"/> </br>
             <label style="font-size:15px">Password:</label></br>
@@ -127,19 +141,19 @@
             <input type="date" name = "dob"/></br>
             <label style="font-size:15px">Working Airline:</label></br>
             <input type="date" name = "airline"/></br>
-            <input type="submit" value="Search">
+            <input type="submit" value="Register">
             {% if error %}
               <p class="error"><strong>Error:</strong> {{error}}</p>
             {% endif %}
         </form>
     </div>
-    <p><a href="/goback">Go Back</a> </p>
+    <p><a href="/">Go Back</a> </p>
 
 
-  {% if register == 'agent'%}
+  {% elif register == 'agent'%}
 
-    <div id=register-A class="tabcontent active">
-        <form action="/registerAuth_staff" method="POST"></form>
+    <div id=register-A class="tabcontent" style="display: block;">
+        <form action="/registerAuth_S" method="POST"></form>
             <label style="font-size:15px">Username:</label></br>
             <input type="text" name = "username" required style="font-size:15px"/> </br>
             <label style="font-size:15px">Password:</label></br>
@@ -147,13 +161,30 @@
             <label style="font-size:15px">ID:</label></br>
             <input type="password" name = "Agent ID" required style="font-size:15px"/></br>
 
-            <input type="submit" value="Search">
+            <input type="submit" value="Register">
             {% if error %}
               <p class="error"><strong>Error:</strong> {{error}}</p>
             {% endif %}
         </form>
     </div>
-    <p><a href="/goback">Go Back</a> </p>
-
+    <p><a href="/">Go Back</a> </p>
+    {% endif %}
   </body>
+  <script>
+
+<!--  openTab(window.onload, 'register-C');-->
+  function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+  </script>
 </html>
