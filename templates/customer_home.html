@@ -117,7 +117,7 @@
           <th>Departure</th>
           <th>Arrival</th>
           <th>Price</th>
-<!--          <th>Action</th>-->
+          <th>Action</th>
 
           {% for line in flights %}
             <tr>
@@ -132,21 +132,23 @@
                 {{line[7]}}
               </td>
               <td>{{line[8]}}</td>
-<!--              <td><a href="/customer/purchase">Purchase</a></td>-->
+             <td><a href="/customer/purchase">Purchase</a></td>
             </tr>
           {% endfor %}
 
         </table>
       {% endif %}
+
     <!--purchase tickets-->
-      <p></p>
-      <label>Chooes a flight to purchase:
-      <input list="flight_num_list" name="myBrowser" /></label>
+      <!-- <label>
+        Chooes a flight to purchase:
+        <input list="flight_num_list" name="myBrowser" />
+      </label>
       <datalist id="flight_num_list">
        {% for i in departure_city %}
       <option>{{ i }}</option>
        {% endfor %}
-      </datalist>
+      </datalist> -->
 
     </div>
 
@@ -200,6 +202,7 @@
       {% endif %}
 
     </div>
+
 <!--——————————————————————————————————————————TAB STATS————————————————————————————————————————————————-->
   {% elif cview == 'stats' %}
 

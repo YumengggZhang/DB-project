@@ -308,11 +308,6 @@ def customer_purchase():
 
 @app.route('/cviewMy')
 def cview_my():
-    return render_template('customer_home.html', username=session['nickname'], cview='my')
-
-@app.route('/customer/searchMy', methods=['GET', 'POST'])
-def customer_search_my():
-    if
     username= session['username']
     cursor = conn.cursor()
     query = 'SELECT DISTINCT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city,\
@@ -323,16 +318,33 @@ def customer_search_my():
             ORDER BY departure_time'
     cursor.execute(query.format(username))
     data = cursor.fetchall()
+    print(data)
     cursor.close()
     return render_template('customer_home.html', username=session['nickname'], cview='my', flights=data)
 
 
+@app.route('/customer/searchMy', methods=['GET', 'POST'])
+def customer_search_my():
+    username= session['username']
+    cursor = conn.cursor()
+    query = 'SELECT DISTINCT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city,\
+            arrive_airport,arrival_time,price\
+            FROM flight NATURAL JOIN Ticket NATURAL JOIN purchases, airport A1, airport A2\
+            WHERE flight.depart_airport=A1.name AND flight.arrive_airport=A2.name AND flight_status="upcoming"\
+            AND customer_email=\'{}\' \
+            ORDER BY departure_time'
+    cursor.execute(query.format(username))
+    data = cursor.fetchall()
+    print(data)
+    cursor.close()
+    return render_template('customer_home.html', username=session['nickname'], cview='my', flights=data)
 
 
 @app.route('/cviewStats')
 def cview_stats():
     return render_template('customer_home.html', username=session['nickname'], cview='stats')
-#------------------------------------Agent-----------------------------------------
+
+# ------------------------------------Agent-----------------------------------------
 
 @app.route('/aviewAll')
 def aview_all():
