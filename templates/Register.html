@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Register - YZ/A</title>
+
+    <!-- modified from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_tabs -->
+
+    <style>
+    body {font-family: Arial;}
+
+    /* Style the tab */
+    .tab {
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+    }
+
+    /* Style the buttons inside the tab */
+    .tab button {
+      background-color: inherit;
+      float: left;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      transition: 0.3s;
+      font-size: 17px;
+    }
+
+    /* Change background color of buttons on hover */
+    .tab button:hover {
+      background-color: #ddd;
+    }
+
+    /* Create an active/current tablink class */
+    .tab button.active {
+      background-color: #ccc;
+    }
+
+    /* Style the tab content */
+    .tabcontent {
+      display: none;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-top: none;
+    }
+    </style>
+
+    <style type="text/css">
+      table, th, td{
+        border: 1px solid black;
+        padding: 14px 16px;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- upper left corner: login/register -->
+    <h2>Join YZ Airline for Pleasant Journey&nbsp;&nbsp;&nbsp;&nbsp;</h2>
+
+    <!-- tabs -->
+    <div class="tab">
+      <form action="/registerCustomer">
+         <button class="tablinks" type="submit">Register customer account</button>
+      </form>
+      <form action="/registerStaff">
+         <button class="tablinks" type="submit">Register staff account</button>
+      </form>
+      <form action="/RegisterAgent">
+         <button class="tablinks" type="submit">Register agency account</button>
+      </form>
+    </div>
+
+
+  {% if register == 'customer' %}
+    <div id="register-C" class="tabcontent active">
+
+        <form action="/registerAuth_C" method="POST">
+
+        <label style="font-size:15px">E-mail:</label></br>
+        <input type="text" name = "email" required style="font-size:15px"/></br>
+        <label style="font-size:15px">Password:</label></br>
+        <input type="password" name = "password" required style="font-size:15px"/></br>
+        <label style="font-size:15px">Name:</label></br>
+        <input type="text" name = "name" required style="font-size:15px"/></br>
+        <label style="font-size:15px">Phone Number:</label></br>
+        <input type="text" name = "phone" required style="font-size:15px"/></br>
+        <label style="font-size:15px">State:</label></br>
+        <input type="text" name = "state" required style="font-size:15px"/></br>
+        <label style="font-size:15px">City:</label></br>
+        <input type="text" name = "city" required style="font-size:15px"/></br>
+        <label style="font-size:15px">Street:</label></br>
+        <input type="text" name = "street" style="font-size:15px"/></br>
+        <label style="font-size:15px">Building No:</label></br>
+        <input type="text" name = "building" required style="font-size:15px"/></br>
+        <label style="font-size:15px">Date of Birth:</label></br>
+        <input type="date" name = "dob"/></br>
+        <label style="font-size:15px">Passport Country:</label></br>
+        <input type="text" name = "passport_country" required style="font-size:15px"/></br>
+        <label style="font-size:15px">Passport Number:</label></br>
+        <input type="text" name = "passport_number" required style="font-size:15px"/></br>
+        <label style="font-size:15px">Passport Expiration Date:</label></br>
+        <input type="date" name = "expiration_date" /></br>
+        <input type="submit" value="Search">
+        {% if error %}
+          <p class="error"><strong>Error:</strong> {{error}}</p>
+        {% endif %}
+      </form>
+    </div>
+    <p><a href="/goback">Go Back</a> </p>
+
+  {% if register == 'staff' %}
+    <div id=register-S class="tabcontent active">
+        <form action="/registerAuth_staff" method="POST"></form>
+            <label style="font-size:15px">Username:</label></br>
+            <input type=text" name = "username" placeholder="username" required style="font-size:15px"/> </br>
+            <label style="font-size:15px">Password:</label></br>
+            <input type="password" name = "password" placeholder="password" required style="font-size:15px"/></br>
+            <label style="font-size:15px">First Name:</label></br>
+            <input type="text" name = "first_name" placeholder="first name" required style="font-size:15px"/></br>
+            <label style="font-size:15px">Last Name:</label></br>
+            <input type="text" name = "last_name" placeholder="last name" required style="font-size:15px"/></br>
+            <label style="font-size:15px">Date of Birth:</label></br>
+            <input type="date" name = "dob"/></br>
+            <label style="font-size:15px">Working Airline:</label></br>
+            <input type="date" name = "airline"/></br>
+            <input type="submit" value="Search">
+            {% if error %}
+              <p class="error"><strong>Error:</strong> {{error}}</p>
+            {% endif %}
+        </form>
+    </div>
+    <p><a href="/goback">Go Back</a> </p>
+
+
+  {% if register == 'agent'%}
+
+    <div id=register-A class="tabcontent active">
+        <form action="/registerAuth_staff" method="POST"></form>
+            <label style="font-size:15px">Username:</label></br>
+            <input type="text" name = "username" required style="font-size:15px"/> </br>
+            <label style="font-size:15px">Password:</label></br>
+            <input type="password" name = "password" required style="font-size:15px"/></br>
+            <label style="font-size:15px">ID:</label></br>
+            <input type="password" name = "Agent ID" required style="font-size:15px"/></br>
+
+            <input type="submit" value="Search">
+            {% if error %}
+              <p class="error"><strong>Error:</strong> {{error}}</p>
+            {% endif %}
+        </form>
+    </div>
+    <p><a href="/goback">Go Back</a> </p>
+
+  </body>
+</html>

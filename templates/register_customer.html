@@ -30,20 +30,22 @@
 	<input type="text" name = "passport_number" required style="font-size:15px"/></br>
 	<label style="font-size:15px">Passport Expiration Date:</label></br>
 	<input type="date" name = "expiration_date" /></br>
+	<input type="submit" value="Search">
 
-	<br>
-</form>
+        {% if error %}
+          <p class="error"><strong>Error:</strong> {{error}}</p>
+        {% endif %}
+      </form>
 
-<div style="width:4%; float:left">
-	<input type="submit" value = Register style="font-size:15px"/>
-</div>
 <div style="width:40%; float:left">
-		<a href="/">
-			<input name='goback' type='button' value='Go Back' style="font-size:15px"/>
-		</a>
-	{% if error %}
-		<p class="error"><strong>Error:</strong> {{error}}</p>
-	{% endif %}
+	<a href="/">
+		<input name='goback' type='button' value='Go Back' style="font-size:15px"/>
+	</a>
+</div>
+
+{% for message in get_flashed_messages() %}
+<div class=flash>{{ message }}</div>
+{% endfor %}
 </div>
 </body>
 </html>
