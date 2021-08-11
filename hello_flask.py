@@ -203,7 +203,7 @@ def registerAuth_customer():
     street = request.form.get('street')
     building = request.form.get('building')
     dob = request.form.get('dob')
-    passport_country = request.form..get('passport_country')
+    passport_country = request.form.get('passport_country')
     passport_number = request.form.get('passport_number')
     expiration_date = request.form.get('expiration_date')
 
