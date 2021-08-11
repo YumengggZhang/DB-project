@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 import pymysql
+import datetime
 
 # Initialize the app from Flask
 app = Flask(__name__)
@@ -264,6 +265,7 @@ def registerAuth_staff():
         # flash("Registration Done.")
         return redirect(url_for('/login'))
 
+#---------------------------------customer homepage------------------------------------
 
 @app.route('/cviewAll')
 def cview_all():
@@ -374,7 +376,7 @@ def cview_stats():
     return render_template('customer_home.html', username=session['nickname'], cview='stats')
 
 
-# ------------------------------------Agent-----------------------------------------
+# ------------------------------------Agent homepage-----------------------------------------
 @app.route('/aviewAll')
 def aview_all():
     # return redirect(url_for(customer_home), cview='all')
@@ -405,14 +407,56 @@ def agent_search_all():
 
 @app.route('/aviewMy')
 def aview_my():
-    return render_template('agent_home.html', username=session['nickname'], aview='my')
+    today = datetime.date.today()
+    ly_today = today - datetime.timedelta(52*7)
+    lm_today = today - datetime.timedelta(30)
+    ly_today = ly_today.strftime('%y%m%d')
+    str_today = today.strftime('%y%m%d')
+    username = session['username']
+    cursor = conn.cursor()
+
+    flight_query = 'SELECT *  FROM flight\
+             WHERE flight_status = "upcoming"\
+             AND (airline_name, flight_num) IN\
+             (SELECT airline_name, flight_num  FROM ticket\
+             WHERE ticket_id IN (SELECT ticket_id\
+              FROM purchases WHERE booking_agent_email = \'{}\'))'
+    cursor.execute(flight_query.format(username))
+    flight_data = cursor.fetchall()
+
+    commission_query = 'SELECT booking_agent_email,sum(price*0.1) as tot_commision,\
+                    sum(price*0.1)/(COUNT(Ticket_id)) as avg_commsion, count(ticket_id) as ticket_sold\
+                    FROM purchases NATURAL JOIN Ticket NATURAL JOIN flight\
+                    WHERE transaction_date BETWEEN \'{}\' AND \'{}\'\
+                    AND booking_agent_email = \'{}\' '
+
+    cursor.execute(commission_query.format(lm_today, today,username))
+    commission_data = cursor.fetchall()
+
+
+
+    customer_query = 'SELECT Customer_email, SUM(price)\
+                        FROM Ticket NATURAL JOIN purchases NATURAL JOIN flight\
+                        WHERE booking_agent_email=\'{}\' \
+                        AND transaction_date \
+                        AND customer_email IN (SELECT DISTINCT Customer_email \
+                        FROM purchases WHERE booking_agent_email=\'{}\' )\
+                        GROUP BY Customer_email'
+
+    top_customer_data = cursor.fetchall()
+
+    cursor.close()
+
+    return render_template('agent_home.html', username=session['nickname'], aview='my',
+                           flights=flight_data,
+                           commision = commission_data)
 
 
 @app.route('/aviewStats')
 def aview_stats():
     return render_template('agent_home.html', username=session['nickname'], aview='stats')
 
-#——----------------------------------------------------Airline Staff--------------------------------------------------------
+#——-------------------------------------------------Staff Homepage--------------------------------------------------------
 @app.route('/sadd')
 def s_add():
     # return redirect(url_for(customer_home), cview='all')
@@ -426,7 +470,7 @@ def staff_view_my():
     query = 'SELECT * FROM flight\
             WHERE airline_name IN (SELECT airline_name FROM airline_staff WHERE username=\'{}\')'
     cursor.execute(query.format(username))
-    print(username)
+    # print(username)
     data = cursor.fetchall()
     cursor.close()
     return render_template('staff_home.html', username=session['nickname'], s='viewMy', flights=data)
