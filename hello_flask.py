@@ -276,8 +276,8 @@ def registerAuth_staff():
         # flash("Registration Done.")
         return redirect(url_for('/login'))
 
-#---------------------------------customer homepage------------------------------------
 
+# ---------------------------------customer homepage------------------------------------
 @app.route('/cviewAll')
 def cview_all():
     # return redirect(url_for(customer_home), cview='all')

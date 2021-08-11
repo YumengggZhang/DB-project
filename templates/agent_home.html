@@ -192,7 +192,68 @@
   {% elif cview == 'stats' %}
 
     <div id="stats" class="tabcontent" style="display: block;">
-      <p>Tokyo is the capital of Japan.</p>
+
+      <!-- table 0: view my commision -->
+      <table>
+        <caption>View My Commision</caption>
+        <th></th>
+        <th>Total Commision</th>
+        <th>Average Commision</th>
+        <th>Number of Tickets</th>
+
+          <tr>
+            <td>For the last 30 days</td>
+            <td>{{commision_data[0]}}</td>
+            <td>{{commision_data[1]}}</td>
+            <td>{{commision_data[2]}}</td>
+          </tr>
+        {% endfor %}
+      </table>
+
+      <!-- table 1: top customer by number of tickets -->
+      <table>
+        <caption>Top Customer by Number of Tickets</caption>
+        <th>Email</th>
+        <th>Name</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Phone Number</th>
+        <th>Date of Birth</th>
+
+        {% for line in top_customer_list1 %}
+          <tr>
+            <td>{{line[0]}}</td>
+            <td>{{line[1]}}</td>
+            <td>{{line[2]}}</td>
+            <td>{{line[3]}}</td>
+            <td>{{line[4]}}</td>
+            <td>{{line[5]}}</td>
+          </tr>
+        {% endfor %}
+      </table>
+
+      <!-- table 2: top customer by commision fee -->
+      <table>
+        <caption>Top Customer by Commision</caption>
+        <th>Email</th>
+        <th>Name</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Phone Number</th>
+        <th>Date of Birth</th>
+
+        {% for line in top_customer_list2 %}
+          <tr>
+            <td>{{line[0]}}</td>
+            <td>{{line[1]}}</td>
+            <td>{{line[2]}}</td>
+            <td>{{line[3]}}</td>
+            <td>{{line[4]}}</td>
+            <td>{{line[5]}}</td>
+          </tr>
+        {% endfor %}
+      </table>
+
     </div>
 
   {% endif %}
