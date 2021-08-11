@@ -320,10 +320,10 @@ def customer_verify_flight():
     SELECT seats_amt - count(Ticket_id) as capacity
 FROM flight NATURAL JOIN airplane NATURAL JOIN Ticket
 WHERE airline_name=\'{0}\' AND flight_num=\'{1}\' 
-GROUP BY airline_name, flight_num
-    """
-    cursor.execute(query.format(airline, flight_num))
+    """.format(airline, flight_num)
+    cursor.execute(query)
     raw = cursor.fetchone()
+    print(raw)
     seats_avail = raw[0]
     cursor.close()
     if seats_avail > 0:
@@ -378,7 +378,7 @@ def customer_confirm_purchase():
     cursor.execute(query0)
     max_ticket_id = cursor.fetchone()[0]
     raw = int(max_ticket_id) + 1
-    ticket_id = str(raw).zfill(5)
+    ticket_id = str(raw).zfill(4)
     cursor.close()
 
     # insert ticket
