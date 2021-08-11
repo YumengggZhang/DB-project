@@ -194,12 +194,12 @@ def register_staff():
 
 @app.route('/registerAuth_C')
 def registerAuth_customer():
-    email = request.form['email']
-    password = request.form['password']
-    name = request.form['name']
-    phone = request.form['phone']
-    state = request.form['state']
-    city = request.form['city']
+    email = request.get.form('email')
+    password = request.get.form('password')
+    name = request.get.form('name')
+    phone = request.get.form('phone')
+    state = request.get.form('state')
+    city = request.get.form('city')
     street = request.form['street']
     building = request.form['building']
     dob = request.form['dob']
