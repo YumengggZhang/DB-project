@@ -3,6 +3,11 @@
   <head>
     <meta charset="utf-8">
     <title>Purchase - YZ/A</title>
+    <style type="text/css">
+      table, th, td{
+        border: 1px solid black;
+      }
+    </style>
   </head>
   <body>
     <h2>Please check the information below carefully:</h2>
@@ -17,23 +22,20 @@
         <th>Departure</th>
         <th>Arrival</th>
         <th>Price</th>
-        <th>Action</th>
 
-        {% for line in flight_info %}
           <tr>
-            <td>{{line[0]}}</td>
-            <td>{{line[1]}}</td>
-            <td>{{line[3]}}, <b>{{line[2]}}</b>
+            <td>{{flight_info[0]}}</td>
+            <td>{{flight_info[1]}}</td>
+            <td>{{flight_info[3]}}, <b>{{flight_info[2]}}</b>
               <br>
-              {{line[4]}}
+              {{flight_info[4]}}
             </td>
-            <td>{{line[6]}}, <b>{{line[5]}}</b>
+            <td>{{flight_info[6]}}, <b>{{flight_info[5]}}</b>
               <br>
-              {{line[7]}}
+              {{flight_info[7]}}
             </td>
-            <td>{{line[8]}}</td>
+            <td>{{flight_info[8]}}</td>
           </tr>
-        {% endfor %}
 
       </table>
     {% endif %}
@@ -51,17 +53,15 @@
         <th>Passport Country</th>
         <th>Date of Birth</th>
 
-        {% for line in customer_info %}
           <tr>
-            <td>{{line[0]}}</td>
-            <td>{{line[1]}}</td>
-            <td>{{line[2]}}</td>
-            <td>{{line[3]}}</td>
-            <td>{{line[4]}}</td>
-            <td>{{line[5]}}</td>
-            <td>{{line[6]}}</td>
+            <td>{{customer_info[0]}}</td>
+            <td>{{customer_info[1]}}</td>
+            <td>{{customer_info[2]}}</td>
+            <td>{{customer_info[3]}}</td>
+            <td>{{customer_info[4]}}</td>
+            <td>{{customer_info[5]}}</td>
+            <td>{{customer_info[6]}}</td>
           </tr>
-        {% endfor %}
 
       </table>
     {% endif %}
@@ -74,12 +74,10 @@
         <th>Email</th>
         <th>Booking Agent ID</th>
 
-        {% for line in ba_info %}
           <tr>
-            <td>{{line[0]}}</td>
-            <td>{{line[1]}}</td>
+            <td>{{ba_info[0]}}</td>
+            <td>{{ba_info[1]}}</td>
           </tr>
-        {% endfor %}
 
       </table>
     {% endif %}

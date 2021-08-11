@@ -303,55 +303,121 @@ def customer_verify_flight():
     airline = request.args.get('airline')
     flight_num = request.args.get('flight_num')
 
-    # query evaluation
-    query = ''  # TODO
-    seats_avail = 0
-
     # query execution
     cursor = conn.cursor()
     query = """
-    select ( (select airplane.seats_amt
-  from airplane, flight
-  where airplane.airplane_id = flight.airplane_id
-  and flight.airline_name = \'{0}\'  -- [0] can ba changed in Python
-  and flight.flight_num = \'{1}\')  -- [1] can be changed in Python
-  -
-  (select count(ticket_id)
-  from ticket
-  where flight_airline_name = \'{0}\'  -- [2] can be changed in Python, and has to match [0]
-  and flight_num = \'{1}\')  -- [3] can be changed in Python, and has to match [1]
-) as num_seats_avail;  -- if the airplane is full, num_seats_avail will be 0; otherwise it will be a positive number
+    SELECT seats_amt - count(Ticket_id) as capacity
+FROM flight NATURAL JOIN airplane NATURAL JOIN Ticket
+WHERE airline_name=\'{0}\' AND flight_num=\'{1}\' 
+GROUP BY airline_name, flight_num
     """
     cursor.execute(query.format(airline, flight_num))
-    seats_avail = cursor.fetchone()
+    raw = cursor.fetchone()
+    seats_avail = raw[0]
     cursor.close()
     if seats_avail > 0:
-        return redirect(url_for('customer/purchase'))
+        url = """/customer/purchase?airline=\'{0}\'&flight_num=\'{1}\'""".format(airline, flight_num)
+        return redirect(url)
     error = 'We are sorry that there is no available seat on this flight. Please check later or purchase another one.'
-    return redirect(url_for('cviewAll'), error=error)
+    return redirect(url_for('cviewAll'))
 
 
 @app.route('/customer/purchase', methods=['GET', 'POST'])
 def customer_purchase():
-    return render_template('purchase.html')
-    # departure_city = request.form['From']
-    # arrive_city = request.form['To']
-    # session['departure_city'] = departure_city
-    # session['arrive_city'] = arrive_city
-    #
-    # departure_city = session['departure_city']
-    # arrive_city = session['arrive_city']
-    # cursor = conn.cursor()
-    # query = 'SELECT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city,\
-    #         arrive_airport,arrival_time,price\
-    #         FROM flight, airport A1, airport A2\
-    #         WHERE flight.depart_airport=A1.name AND flight.arrive_airport=A2.name AND flight_status="upcoming" \
-    #         AND A1.city=\'{}\' and A2.city = \'{}\' \
-    #         ORDER BY departure_time'
-    # cursor.execute(query.format(departure_city, arrive_city))
-    # data = cursor.fetchall()
-    # cursor.close()
-    # return render_template('customer_home.html', username=session['nickname'], cview='all', flights=data)
+    # get data from query strings
+    airline = request.args.get('airline')
+    flight_num = request.args.get('flight_num')
+    session['airline'] = airline
+    session['flight_num'] = flight_num
+    # query execution
+    cursor = conn.cursor()
+    query1 = """
+    SELECT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city, arrive_airport, arrival_time, price
+    FROM flight, airport A1, airport A2
+    WHERE flight.depart_airport=A1.name AND flight.arrive_airport=A2.name
+    AND airline_name = {0} AND flight_num = {1}""".format(airline, flight_num)
+    cursor.execute(query1)
+    flight_info = cursor.fetchone()
+    cursor.close()
+
+    # get data from session
+    email = session['username']
+    # query execution
+    cursor = conn.cursor()
+    query2 = """
+        SELECT email, name, phone_number, passport_number, passport_expiration, passport_country, date_of_birth
+        FROM customer 
+        WHERE email = \'{}\'
+        """.format(email)
+    cursor.execute(query2)
+    customer_info = cursor.fetchone()
+    cursor.close()
+
+    return render_template('purchase.html', flight_info=flight_info, customer_info=customer_info, ba_info=None)
+
+
+@app.route('/customer/confirmPurchase', methods=['GET', 'POST'])
+def customer_confirm_purchase():
+    # generate ticket ID
+    cursor = conn.cursor()
+    query0 = """
+        SELECT max(ticket_id)
+        FROM ticket
+        """
+    cursor.execute(query0)
+    max_ticket_id = cursor.fetchone()[0]
+    raw = int(max_ticket_id) + 1
+    ticket_id = str(raw).zfill(5)
+    cursor.close()
+
+    # insert ticket
+    airline = session['airline']
+    flight_num = session['flight_num']
+    cursor = conn.cursor()
+    query1 = """
+        INSERT INTO ticket VALUES(\'{0}\', {1}, {2})
+        """.format(ticket_id, airline, flight_num)
+    print(query1)
+    cursor.execute(query1)
+    conn.commit()
+    cursor.close()
+
+    # insert purchase
+    email = session['username']
+    cursor = conn.cursor()
+    query2 = """
+            INSERT INTO purchases VALUES(\'{0}\', \'{1}\', NULL)
+            """.format(ticket_id, email)
+    print(query2)
+    cursor.execute(query2)
+    conn.commit()
+    cursor.close()
+
+    # render success page
+
+    # get ticket info
+    cursor = conn.cursor()
+    query3 = """
+        SELECT *
+        FROM ticket
+        WHERE ticket_id = {0}""".format(ticket_id)
+    print(query3)
+    cursor.execute(query3)
+    ticket_info = cursor.fetchone()
+    cursor.close()
+
+    # get flight info
+    cursor = conn.cursor()
+    query4 = """
+    SELECT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city, arrive_airport, arrival_time, price
+    FROM flight, airport A1, airport A2
+    WHERE flight.depart_airport=A1.name AND flight.arrive_airport=A2.name
+    AND airline_name = {0} AND flight_num = {1}""".format(airline, flight_num)
+    cursor.execute(query4)
+    flight_info = cursor.fetchone()
+    cursor.close()
+
+    return render_template('ticket.html', ticket_info=ticket_info, flight_info=flight_info)
 
 
 @app.route('/cviewMy', methods=['GET', 'POST'])
