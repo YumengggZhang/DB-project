@@ -229,19 +229,19 @@ def registerAuth_customer():
 
 @app.route('/registerAuth_agent', methods=['GET', 'POST'])
 def registerAuth_agent():
-    print(10086)
-    email = request.form['email']
-    password = request.form['password']
-    id = request.form['agent ID']
+
+    email = request.form.get('email')
+    password = request.form.get('password')
+    id = request.form.get('agent_id')
 
     cursor = conn.cursor()
     query = "SELECT COUNT(*) FROM booking_agent WHERE email = \'{}\'"
     cursor.execute(query.format(email))
     adata = cursor.fetchone()
-    print(10086)
     print(adata)
 
-    if adata>0: #check if this email has been registered
+
+    if adata[0]>0: #check if this email has been registered
         error = "This email has already been registered, please login"
         return render_template('register.html', error=error,register='agent')
     else:
@@ -250,7 +250,7 @@ def registerAuth_agent():
         conn.commit()
         cursor.close()
         # flash("Registration Done.")
-        return redirect(url_for('/login'))
+        return redirect(url_for('login'))
 
 
 @app.route('/registerAuth_S', methods=['GET', 'POST'])
@@ -268,7 +268,7 @@ def registerAuth_staff():
     cursor.execute(query.format(username))
     sdata = cursor.fetchone()
 
-    if sdata>0: #check if this email has been registered
+    if sdata[0]>0: #check if this email has been registered
         error = "This username has already been registered, please login"
         return render_template('register.html',error=error,register='staff')
     else:
