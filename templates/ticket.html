@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Ticket Info - YZ/A</title>
+  </head>
+  <body>
+    <h1>Transaction Success! Here is your ticket information:</h1>
+
+
+    <!-- ticket info -->
+    {% if ticket %}
+      <table>
+        <th>Ticket ID</th>
+        <th>Airline Name</th>
+        <th>Flight No.</th>
+        <th>Departure</th>
+        <th>Arrival</th>
+        <th>Price</th>
+        <th>Customer</th>
+        <th>Booking Agent</th>
+        <th>Purchase Date</th>
+
+
+
+        {% for line in ticket %}
+          <tr>
+            <td>{{line[0]}}</td>
+            <td>{{line[1]}}</td>
+            <td>{{line[2]}}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+
+    <!-- flight info -->
+    <form action="/customer_home">
+      <input type="submit" value="Go Back Home">
+    </form>
+  </body>
+</html>

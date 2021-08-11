@@ -5,6 +5,88 @@
     <title>Purchase - YZ/A</title>
   </head>
   <body>
-    <p>success! {{airline}}</p>    
+    <h2>Please check the information below carefully:</h2>
+
+    <!-- flight info -->
+    {% if flight_info %}
+      <table>
+        <caption>Flight Information</caption>
+
+        <th>Airline</th>
+        <th>Flight No.</th>
+        <th>Departure</th>
+        <th>Arrival</th>
+        <th>Price</th>
+        <th>Action</th>
+
+        {% for line in flight_info %}
+          <tr>
+            <td>{{line[0]}}</td>
+            <td>{{line[1]}}</td>
+            <td>{{line[3]}}, <b>{{line[2]}}</b>
+              <br>
+              {{line[4]}}
+            </td>
+            <td>{{line[6]}}, <b>{{line[5]}}</b>
+              <br>
+              {{line[7]}}
+            </td>
+            <td>{{line[8]}}</td>
+          </tr>
+        {% endfor %}
+
+      </table>
+    {% endif %}
+
+    <!-- customer info: email, name, passport -->
+    {% if customer_info %}
+      <table>
+        <caption>Customer Information</caption>
+
+        <th>Email</th>
+        <th>Name</th>
+        <th>Phone No.</th>
+        <th>Passport Number</th>
+        <th>Passport Expiration</th>
+        <th>Passport Country</th>
+        <th>Date of Birth</th>
+
+        {% for line in customer_info %}
+          <tr>
+            <td>{{line[0]}}</td>
+            <td>{{line[1]}}</td>
+            <td>{{line[2]}}</td>
+            <td>{{line[3]}}</td>
+            <td>{{line[4]}}</td>
+            <td>{{line[5]}}</td>
+            <td>{{line[6]}}</td>
+          </tr>
+        {% endfor %}
+
+      </table>
+    {% endif %}
+
+    <!-- booking agent info: email, name, passport -->
+    {% if ba_info %}
+      <table>
+        <caption>Booking Agent Information</caption>
+
+        <th>Email</th>
+        <th>Booking Agent ID</th>
+
+        {% for line in ba_info %}
+          <tr>
+            <td>{{line[0]}}</td>
+            <td>{{line[1]}}</td>
+          </tr>
+        {% endfor %}
+
+      </table>
+    {% endif %}
+
+    <form action="/customer/confirmPurchase">
+      <input type="submit" value="Confirm">
+    </form>
+
   </body>
 </html>
