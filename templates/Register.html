@@ -93,7 +93,7 @@
   {% if register == 'customer' %}
     <div id="register-C" class="tabcontent" style="display: block;">
 
-        <form action="/registerAuth_C" method="POST"></br>
+        <form action="/registerAuth_customer" method="POST"></br>
         <label style="font-size:15px">E-mail:</label></br>
         <input type="text" name = "email" required style="font-size:15px"/></br>
         <label style="font-size:15px">Password:</label></br>
@@ -128,7 +128,7 @@
 
   {% elif register == 'staff' %}
     <div id=register-S class="tabcontent" style="display: block;">
-        <form action="/registerAuth_S" method="POST"></form>
+        <form action="/registerAuth_staff" method="POST"></form>
             <label style="font-size:15px">Username:</label></br>
             <input type=text" name = "username" placeholder="username" required style="font-size:15px"/> </br>
             <label style="font-size:15px">Password:</label></br>
@@ -152,20 +152,19 @@
 
   {% elif register == 'agent'%}
 
-    <div id=register-A class="tabcontent" style="display: block;">
-        <form action="/registerAuth_S" method="POST"></form>
-            <label style="font-size:15px">Username:</label></br>
-            <input type="text" name = "username" required style="font-size:15px"/> </br>
-            <label style="font-size:15px">Password:</label></br>
-            <input type="password" name = "password" required style="font-size:15px"/></br>
-            <label style="font-size:15px">ID:</label></br>
-            <input type="password" name = "Agent ID" required style="font-size:15px"/></br>
-
-            <input type="submit" value="Register">
-            {% if error %}
-              <p class="error"><strong>Error:</strong> {{error}}</p>
-            {% endif %}
-        </form>
+    <div id='register-A' class="tabcontent" style="display: block;">
+    <form action="/registerAuth_agent" method="POST"></form>
+        <label style="font-size:15px">Username:</label></br>
+        <input type="text" name = "username" required style="font-size:15px"/> </br>
+        <label style="font-size:15px">Password:</label></br>
+        <input type="password" name = "password" required style="font-size:15px"/></br>
+        <label style="font-size:15px">ID:</label></br>
+        <input type="text" name = "Agent ID" required style="font-size:15px"/></br>
+        <input type="submit" value="Register">
+        {% if error %}
+          <p class="error"><strong>Error:</strong> {{error}}</p>
+        {% endif %}
+    </form>
     </div>
     <p><a href="/">Go Back</a> </p>
     {% endif %}

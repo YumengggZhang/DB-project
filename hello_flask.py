@@ -193,7 +193,7 @@ def register_staff():
 
 
 @app.route('/registerAuth_C')
-def registerAuth_C():
+def registerAuth_customer():
     email = request.form['email']
     password = request.form['password']
     name = request.form['name']
@@ -217,18 +217,19 @@ def registerAuth_C():
 
     else: #Insert customer info into DB
         cursor = conn.cursor()
-        query_insert = "INSERT INTO customer VALUES(\'{}\', \'{}\', md5(\'{}\'),\
+        query_insert = "INSERT INTO customer VALUES(\'{}\', \'{}\',\'{}\',\
          \'{}\', \'{}\', \'{}\',\'{}\',\'{}\',\'{}\',\'{}\', \'{}\', \'{}\')"
         cursor.excute(query_insert.format(email, name, password, building, street, city, state, phone,
                                           passport_number, expiration_date, passport_country, dob))
         conn.commit()
         cursor.close()
         # flash("Registration Done.")
-        return redirect(url_for('/login'))
+        return redirect(url_for('login'))
 
 
-@app.route('/registerAuth_A', methods=['GET', 'POST'])
+@app.route('/registerAuth_agent', methods=['GET', 'POST'])
 def registerAuth_agent():
+    print(10086)
     email = request.form['email']
     password = request.form['password']
     id = request.form['agent ID']
@@ -237,13 +238,15 @@ def registerAuth_agent():
     query = "SELECT COUNT(*) FROM booking_agent WHERE email = \'{}\'"
     cursor.execute(query.format(email))
     adata = cursor.fetchone()
+    print(10086)
+    print(adata)
 
     if adata>0: #check if this email has been registered
         error = "This email has already been registered, please login"
         return render_template('register.html', error=error,register='agent')
     else:
-        insert_query = "INSERT INTO booking_agent VALUES(\'{}\', md5(\'{}\'), \'{}\')"
-        cursor.execute(insert_query.format(email, password, id))
+        insert_query = "INSERT INTO booking_agent VALUES(\'{}\',\'{}\',\'{}\')"
+        cursor.execute(insert_query.format(email, password,id))
         conn.commit()
         cursor.close()
         # flash("Registration Done.")
@@ -269,8 +272,8 @@ def registerAuth_staff():
         error = "This username has already been registered, please login"
         return render_template('register.html',error=error,register='staff')
     else:
-        insert_query = "INSERT INTO airline_staff VALUES(\'{}\', md5(\'{}\'), \'{}\', \'{}\', \'{}\', \'{}\')"
-        cursor.execute(insert_query, (username, password, first_name, last_name, dob, airline))
+        insert_query = "INSERT INTO airline_staff VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
+        cursor.execute(insert_query.format(username, password,first_name, last_name, dob, airline))
         conn.commit()
         cursor.close()
         # flash("Registration Done.")
