@@ -140,7 +140,7 @@
 
     </div>
 <!--————————————————————————————————————————————————TAB MY————————————————————————————————————————————-->
-  {% elif cview == 'my' %}
+  {% elif aview == 'my' %}
 
     <div id="my-flights" class="tabcontent" style="display: block;">
 
@@ -189,11 +189,12 @@
 
     </div>
 <!--————————————————————-TAB STATS————————————————————————————————————————————-->
-  {% elif cview == 'stats' %}
+  {% elif aview == 'stats' %}
 
     <div id="stats" class="tabcontent" style="display: block;">
 
       <!-- table 0: view my commision -->
+      {% if commission_data %}
       <table>
         <caption>View My Commision</caption>
         <th></th>
@@ -207,7 +208,6 @@
             <td>{{commision_data[1]}}</td>
             <td>{{commision_data[2]}}</td>
           </tr>
-        {% endfor %}
       </table>
 
       <!-- table 1: top customer by number of tickets -->

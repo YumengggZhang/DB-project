@@ -484,11 +484,7 @@ def agent_search_all():
 
 @app.route('/aviewMy')
 def aview_my():
-    today = datetime.date.today()
-    ly_today = today - datetime.timedelta(52*7)
-    lm_today = today - datetime.timedelta(30)
-    ly_today = ly_today.strftime('%y%m%d')
-    str_today = today.strftime('%y%m%d')
+
     username = session['username']
     cursor = conn.cursor()
 
@@ -501,37 +497,60 @@ def aview_my():
     cursor.execute(flight_query.format(username))
     flight_data = cursor.fetchall()
 
-    commission_query = 'SELECT booking_agent_email,sum(price*0.1) as tot_commision,\
-                    sum(price*0.1)/(COUNT(Ticket_id)) as avg_commsion, count(ticket_id) as ticket_sold\
-                    FROM purchases NATURAL JOIN Ticket NATURAL JOIN flight\
-                    WHERE transaction_date BETWEEN \'{}\' AND \'{}\'\
-                    AND booking_agent_email = \'{}\' '
-
-    cursor.execute(commission_query.format(lm_today, today,username))
-    commission_data = cursor.fetchall()
-
-
-
-    customer_query = 'SELECT Customer_email, SUM(price)\
-                        FROM Ticket NATURAL JOIN purchases NATURAL JOIN flight\
-                        WHERE booking_agent_email=\'{}\' \
-                        AND transaction_date \
-                        AND customer_email IN (SELECT DISTINCT Customer_email \
-                        FROM purchases WHERE booking_agent_email=\'{}\' )\
-                        GROUP BY Customer_email'
-
-    top_customer_data = cursor.fetchall()
-
     cursor.close()
 
     return render_template('agent_home.html', username=session['nickname'], aview='my',
-                           flights=flight_data,
-                           commision = commission_data)
+                           flights=flight_data)
+                           # commision = commission_data,
+                           # top_customer_list1 = top_customer_data1)
 
 
 @app.route('/aviewStats')
 def aview_stats():
-    return render_template('agent_home.html', username=session['nickname'], aview='stats')
+    today = datetime.date.today()
+    ly_today = today - datetime.timedelta(25*7)
+    lm_today = today - datetime.timedelta(30)
+    ly_today = ly_today.strftime('%y%m%d')
+    str_today = today.strftime('%y%m%d')
+    username = session['username']
+    cursor = conn.cursor()
+
+    commission_query = 'SELECT booking_agent_email,sum(price*0.1) as tot_commision,\
+                       sum(price*0.1)/(COUNT(Ticket_id)) as avg_commsion, count(ticket_id) as ticket_sold\
+                       FROM purchases NATURAL JOIN Ticket NATURAL JOIN flight\
+                       WHERE transaction_date BETWEEN \'{}\' AND \'{}\'\
+                       AND booking_agent_email = \'{}\' '
+
+    cursor.execute(commission_query.format(lm_today, today, username))
+    commission_data = cursor.fetchall()
+
+    customer_query = 'SELECT customer_email,tickets_amt as t1 FROM (SELECT Customer_email,COUNT(Ticket_id) as tickets_amt\
+       											FROM purchases\
+                                                 	WHERE booking_agent_email = \'{}\'\
+                                                   AND transaction_date BETWEEN \'{}\' AND \'{}\'\
+                                                 	GROUP BY Customer_email) C1\
+                         WHERE  5 > (SELECT count(customer_email) FROM (SELECT Customer_email,COUNT(Ticket_id) as tickets_amt\
+       											FROM purchases\
+                                                  WHERE booking_agent_email = \'{}\'\
+                                                  AND transaction_date BETWEEN \'{}\' AND \'{}\'\
+                                                  GROUP BY Customer_email) C2\
+                         WHERE C2.tickets_amt> C1.tickets_amt)'
+    cursor.execute(customer_query.format(username, ly_today, today, username, ly_today, today))
+    top_5_customer_email = cursor.fetchall()
+    top_5_customer_email_list = [line[0] for line in top_5_customer_email]
+    top_customer_list1 = []
+    customer_query2 = 'SELECT email,name,city,state,phone_number,date_of_birth \
+                           FROM Customer\
+                           WHERE email= \'{}\' '
+    for customer in top_5_customer_email_list:
+        cursor.execute(customer_query2.format(customer))
+        customer_info = cursor.fetchone()
+        top_customer_list1.append(customer_info)
+
+    cursor.close()
+    return render_template('agent_home.html', username=session['nickname'], aview='stats', commision_data = commission_data,
+                           top_customer_list1 = top_customer_list1)
+
 
 #——-------------------------------------------------Staff Homepage--------------------------------------------------------
 @app.route('/sadd')
