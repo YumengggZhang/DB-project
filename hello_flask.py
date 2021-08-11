@@ -192,26 +192,26 @@ def register_staff():
     return render_template('register.html', register='staff')
 
 
-@app.route('/registerAuth_C', methods=['GET', 'POST'])
+@app.route('/registerAuth_customer', methods=['GET', 'POST'])
 def registerAuth_customer():
-    email = request.get.form('email')
-    password = request.get.form('password')
-    name = request.get.form('name')
-    phone = request.get.form('phone')
-    state = request.get.form('state')
-    city = request.get.form('city')
+    email = request.form.get('email')
+    password = request.form.get('password')
+    name = request.form.get('name')
+    phone = request.form.get('phone')
+    state = request.form.get('state')
+    city = request.form.get('city')
     street = request.form.get('street')
     building = request.form.get('building')
     dob = request.form.get('dob')
-    passport_country = request.form..get('passport_country')
+    passport_country = request.form.get('passport_country')
     passport_number = request.form.get('passport_number')
     expiration_date = request.form.get('expiration_date')
 
     cursor = conn.cursor()
     query = "SELECT COUNT(*) FROM customer WHERE email = \'{}\'"
     cursor.execute(query.format(email))
-    cdata = cursor.fetchall()
-    if cdata>0: #check if this email has been registered
+    cdata = cursor.fetchone()
+    if cdata[0]>0: #check if this email has been registered
         error = "This email has already been registered, please login"
         return render_template('register.html', error=error)
 
@@ -219,7 +219,7 @@ def registerAuth_customer():
         cursor = conn.cursor()
         query_insert = "INSERT INTO customer VALUES(\'{}\', \'{}\',\'{}\',\
          \'{}\', \'{}\', \'{}\',\'{}\',\'{}\',\'{}\',\'{}\', \'{}\', \'{}\')"
-        cursor.excute(query_insert.format(email, name, password, building, street, city, state, phone,
+        cursor.execute(query_insert.format(email, name, password, building, street, city, state, phone,
                                           passport_number, expiration_date, passport_country, dob))
         conn.commit()
         cursor.close()
@@ -253,7 +253,7 @@ def registerAuth_agent():
         return redirect(url_for('login'))
 
 
-@app.route('/registerAuth_S', methods=['GET', 'POST'])
+@app.route('/registerAuth_staff', methods=['GET', 'POST'])
 def registerAuth_staff():
     username = request.form['username']
     password = request.form['password']
@@ -277,7 +277,7 @@ def registerAuth_staff():
         conn.commit()
         cursor.close()
         # flash("Registration Done.")
-        return redirect(url_for('/login'))
+        return redirect(url_for('login'))
 
 
 # ---------------------------------customer homepage------------------------------------

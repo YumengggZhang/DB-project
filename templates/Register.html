@@ -95,28 +95,26 @@
         <form action="/registerAuth_customer" method="POST"></br>
         <label style="font-size:15px">E-mail:</label></br>
         <input type="text" name = "email" required style="font-size:15px"/></br>
+        <label style="font-size:15px">Name:</label></br>
+        <input type="password" name = "name" required style="font-size:15px"/></br>
         <label style="font-size:15px">Password:</label></br>
         <input type="password" name = "password" required style="font-size:15px"/></br>
-        <label style="font-size:15px">Name:</label></br>
-        <input type="text" name = "name" required style="font-size:15px"/></br>
-        <label style="font-size:15px">Phone Number:</label></br>
-        <input type="text" name = "phone" required style="font-size:15px"/></br>
         <label style="font-size:15px">State:</label></br>
         <input type="text" name = "state" required style="font-size:15px"/></br>
         <label style="font-size:15px">City:</label></br>
         <input type="text" name = "city" required style="font-size:15px"/></br>
         <label style="font-size:15px">Street:</label></br>
-        <input type="text" name = "street" style="font-size:15px"/></br>
-        <label style="font-size:15px">Building No:</label></br>
         <input type="text" name = "building" required style="font-size:15px"/></br>
-        <label style="font-size:15px">Date of Birth:</label></br>
-        <input type="date" name = "dob"/></br>
-        <label style="font-size:15px">Passport Country:</label></br>
-        <input type="text" name = "passport_country" required style="font-size:15px"/></br>
+        <label style="font-size:15px">Phone Number:</label></br>
+        <input type="text" name = "phone" required style="font-size:15px"/></br>
         <label style="font-size:15px">Passport Number:</label></br>
         <input type="text" name = "passport_number" required style="font-size:15px"/></br>
         <label style="font-size:15px">Passport Expiration Date:</label></br>
         <input type="date" name = "expiration_date" /></br>
+        <label style="font-size:15px">Passport Country:</label></br>
+        <input type="text" name = "passport_country" required style="font-size:15px"/></br>
+        <label style="font-size:15px">Date of Birth:</label></br>
+        <input type="date" name = "dob"/></br>
         <input type="submit" value="Register">
         {% if error %}
           <p class="error"><strong>Error:</strong> {{error}}</p>
@@ -157,7 +155,7 @@
             <label style="font-size:15px">Date of Birth:</label></br>
             <input type="date" name = "dob"/></br>
             <label style="font-size:15px">Working Airline:</label></br>
-            <input type="date" name = "airline"/></br>
+            <input type="text" name = "airline"/></br>
             <input type="submit" value="Register">
             {% if error %}
               <p class="error"><strong>Error:</strong> {{error}}</p>
