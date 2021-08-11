@@ -128,7 +128,7 @@
 
   {% elif register == 'staff' %}
     <div id="register-S" class="tabcontent" style="display: block;">
-        <form action="/registerAuth_staff" method="POST"></form>
+        <form action="/registerAuth_staff" method="POST">
             <label style="font-size:15px">Username:</label></br>
             <input type="text" name = "username" placeholder="username" required style="font-size:15px"/> </br>
             <label style="font-size:15px">Password:</label></br>
@@ -150,10 +150,10 @@
     <p><a href="/">Go Back</a> </p>
 
 
-  {% elif register == 'agent'%}
+  {% elif register == 'agent' %}
 
     <div id='register-A' class="tabcontent" style="display: block;">
-    <form action="/registerAuth_agent" method="POST"></form>
+    <form action="/registerAuth_agent" method="POST">
         <label style="font-size:15px">Username:</label></br>
         <input type="text" name = "username" required style="font-size:15px"/> </br>
         <label style="font-size:15px">Password:</label></br>

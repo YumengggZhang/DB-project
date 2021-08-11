@@ -227,7 +227,7 @@ def registerAuth_customer():
         return redirect(url_for('login'))
 
 
-@app.route('/registerAuth_agent', methods=['GET', 'POST'])
+@app.route('/registerAuth_agent')
 def registerAuth_agent():
     print(10086)
     email = request.form['email']
@@ -243,14 +243,14 @@ def registerAuth_agent():
 
     if adata>0: #check if this email has been registered
         error = "This email has already been registered, please login"
-        return render_template('register.html', error=error,register='agent')
+        return render_template('register.html', error=error, register='agent')
     else:
         insert_query = "INSERT INTO booking_agent VALUES(\'{}\',\'{}\',\'{}\')"
         cursor.execute(insert_query.format(email, password,id))
         conn.commit()
         cursor.close()
         # flash("Registration Done.")
-        return redirect(url_for('/login'))
+        return redirect(url_for('login'))
 
 
 @app.route('/registerAuth_S', methods=['GET', 'POST'])
