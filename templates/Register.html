@@ -146,11 +146,29 @@
           <p class="error"><strong>Error:</strong> {{error}}</p>
         {% endif %}
     </form>
+        <form action="/registerAuth_staff" method="POST">
+            <label style="font-size:15px">Username:</label></br>
+            <input type="text" name = "username" placeholder="username" required style="font-size:15px"/> </br>
+            <label style="font-size:15px">Password:</label></br>
+            <input type="password" name = "password" placeholder="password" required style="font-size:15px"/></br>
+            <label style="font-size:15px">First Name:</label></br>
+            <input type="text" name = "first_name" placeholder="first name" required style="font-size:15px"/></br>
+            <label style="font-size:15px">Last Name:</label></br>
+            <input type="text" name = "last_name" placeholder="last name" required style="font-size:15px"/></br>
+            <label style="font-size:15px">Date of Birth:</label></br>
+            <input type="date" name = "dob"/></br>
+            <label style="font-size:15px">Working Airline:</label></br>
+            <input type="date" name = "airline"/></br>
+            <input type="submit" value="Register">
+            {% if error %}
+              <p class="error"><strong>Error:</strong> {{error}}</p>
+            {% endif %}
+        </form>
     </div>
     <p><a href="/">Go Back</a> </p>
 
 
-  {% elif register == 'agent'%}
+  {% elif register == 'agent' %}
 
     <div id='register-A' class="tabcontent" style="display: block;">
     <form action="/registerAuth_agent" method="POST">
