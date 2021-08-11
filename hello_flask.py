@@ -120,16 +120,19 @@ def loginAuth():
         session['username'] = username
         # session['usertype'] = usertype
 
-        session['nickname'] = userdata[0][1]  # refers to the 'name' attribute, used for home page
+        # session['nickname'] = userdata[0][1]  # refers to the 'name' attribute, used for home page
 
         if (not agent_id) and (not airline):
+            session['nickname'] = userdata[0][1]
             return redirect(url_for('customer_home'))
         elif agent_id:
+            session['nickname'] = userdata[0][1]
             session['agent_id'] = agent_id
             return redirect(url_for('agent_home'))
         elif airline:
             session['airline'] = airline
-            return redirect(url_for('customer_home'))
+            session['nickname'] = username
+            return redirect(url_for('staff_home'))
 
     else:
         flash('Invalid login or username.')
@@ -143,7 +146,7 @@ def customer_home():
 
 @app.route('/staff_home')
 def staff_home():
-    return render_template('staff_home.html', username=session['nickname'])
+    return render_template('staff_home.html', username=session['username'])
 
 
 @app.route('/agent_home')
@@ -253,6 +256,9 @@ def registerAuth_staff():
         return redirect(url_for('/login'))
 
 
+# --------------------------------customer homepage---------------------------------
+
+
 @app.route('/cviewAll')
 def cview_all():
     # return redirect(url_for(customer_home), cview='all')
@@ -261,25 +267,25 @@ def cview_all():
 
 @app.route('/customer/searchAll', methods=['GET', 'POST'])
 def customer_search_all():
-    if request.method == 'GET':
-        departure_city = request.form['From']
-        arrive_city = request.form['To']
-        session['departure_city'] = departure_city
-        session['arrive_city'] = arrive_city
+    # if request.method == 'GET':
+    departure_city = request.form['From']
+    arrive_city = request.form['To']
+    session['departure_city'] = departure_city
+    session['arrive_city'] = arrive_city
 
-        departure_city = session['departure_city']
-        arrive_city = session['arrive_city']
-        cursor = conn.cursor()
-        query = 'SELECT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city,\
-                arrive_airport,arrival_time,price\
-                FROM flight, airport A1, airport A2\
-                WHERE flight.depart_airport=A1.name AND flight.arrive_airport=A2.name AND flight_status="upcoming" \
-                AND A1.city=\'{}\' and A2.city = \'{}\' \
-                ORDER BY departure_time'
-        cursor.execute(query.format(departure_city, arrive_city))
-        data = cursor.fetchall()
-        cursor.close()
-        return render_template('customer_home.html', username=session['nickname'], cview='all', flights=data)
+    departure_city = session['departure_city']
+    arrive_city = session['arrive_city']
+    cursor = conn.cursor()
+    query = 'SELECT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city,\
+            arrive_airport,arrival_time,price\
+            FROM flight, airport A1, airport A2\
+            WHERE flight.depart_airport=A1.name AND flight.arrive_airport=A2.name AND flight_status="upcoming" \
+            AND A1.city=\'{}\' and A2.city = \'{}\' \
+            ORDER BY departure_time'
+    cursor.execute(query.format(departure_city, arrive_city))
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template('customer_home.html', username=session['nickname'], cview='all', flights=data)
 
 @app.route('/customer/purchase', methods=['GET', 'POST'])
 def customer_purchase():
@@ -304,15 +310,9 @@ def customer_purchase():
     # return render_template('customer_home.html', username=session['nickname'], cview='all', flights=data)
 
 
-
-
-@app.route('/cviewMy')
+@app.route('/cviewMy', methods=['GET', 'POST'])
 def cview_my():
-    return render_template('customer_home.html', username=session['nickname'], cview='my')
 
-@app.route('/customer/searchMy', methods=['GET', 'POST'])
-def customer_search_my():
-    if
     username= session['username']
     cursor = conn.cursor()
     query = 'SELECT DISTINCT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city,\
@@ -326,7 +326,23 @@ def customer_search_my():
     cursor.close()
     return render_template('customer_home.html', username=session['nickname'], cview='my', flights=data)
 
+    # return render_template('customer_home.html', username=session['nickname'], cview='my')
 
+# @app.route('/customer/searchMy', methods=['GET', 'POST'])
+# def customer_search_my():
+#
+#     username= session['username']
+#     cursor = conn.cursor()
+#     query = 'SELECT DISTINCT airline_name, flight_num, A1.city as depart_city, depart_airport, departure_time, A2.city as arrival_city,\
+#             arrive_airport,arrival_time,price\
+#             FROM flight NATURAL JOIN Ticket NATURAL JOIN purchases, airport A1, airport A2\
+#             WHERE flight.depart_airport=A1.name AND flight.arrive_airport=A2.name AND flight_status="upcoming"\
+#             AND customer_email=\'{}\' \
+#             ORDER BY departure_time'
+#     cursor.execute(query.format(username))
+#     data = cursor.fetchall()
+#     cursor.close()
+#     return render_template('customer_home.html', username=session['nickname'], cview='my', flights=data)
 
 
 @app.route('/cviewStats')
@@ -370,6 +386,30 @@ def aview_my():
 @app.route('/aviewStats')
 def aview_stats():
     return render_template('agent_home.html', username=session['nickname'], aview='stats')
+
+#——----------------------------------------------------Airline Staff--------------------------------------------------------
+@app.route('/sadd')
+def s_add():
+    # return redirect(url_for(customer_home), cview='all')
+    return render_template('staff_home.html', username=session['nickname'], s='add')
+
+
+@app.route('/sviewMy', methods=['GET', 'POST'])
+def staff_view_my():
+    username = session['username']
+    cursor = conn.cursor()
+    query = 'SELECT * FROM flight\
+            WHERE airline_name IN (SELECT airline_name FROM airline_staff WHERE username=\'{}\')'
+    cursor.execute(query.format(username))
+    print(username)
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template('staff_home.html', username=session['nickname'], s='viewMy', flights=data)
+
+
+@app.route('/sstats')
+def staff_stats():
+    return render_template('staff_home.html', username=session['nickname'], s='stats')
 
 @app.route('/logout')
 def logout():
