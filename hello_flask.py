@@ -192,7 +192,7 @@ def register_staff():
     return render_template('register.html', register='staff')
 
 
-@app.route('/registerAuth_C')
+@app.route('/registerAuth_C', methods=['GET', 'POST'])
 def registerAuth_customer():
     email = request.get.form('email')
     password = request.get.form('password')
@@ -200,12 +200,12 @@ def registerAuth_customer():
     phone = request.get.form('phone')
     state = request.get.form('state')
     city = request.get.form('city')
-    street = request.form['street']
-    building = request.form['building']
-    dob = request.form['dob']
-    passport_country = request.form['passport_country']
-    passport_number = request.form['passport_number']
-    expiration_date = request.form['expiration_date']
+    street = request.form.get('street')
+    building = request.form.get('building')
+    dob = request.form.get('dob')
+    passport_country = request.form..get('passport_country')
+    passport_number = request.form.get('passport_number')
+    expiration_date = request.form.get('expiration_date')
 
     cursor = conn.cursor()
     query = "SELECT COUNT(*) FROM customer WHERE email = \'{}\'"
@@ -213,7 +213,7 @@ def registerAuth_customer():
     cdata = cursor.fetchall()
     if cdata>0: #check if this email has been registered
         error = "This email has already been registered, please login"
-        return render_template('register.html',error=error)
+        return render_template('register.html', error=error)
 
     else: #Insert customer info into DB
         cursor = conn.cursor()
