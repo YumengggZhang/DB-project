@@ -9,31 +9,55 @@
 
 
     <!-- ticket info -->
-    {% if ticket %}
+    {% if ticket_info %}
       <table>
         <th>Ticket ID</th>
         <th>Airline Name</th>
         <th>Flight No.</th>
-        <th>Departure</th>
-        <th>Arrival</th>
-        <th>Price</th>
-        <th>Customer</th>
-        <th>Booking Agent</th>
-        <th>Purchase Date</th>
+        <th>Customer Email</th>
+        <th>Booking Agent Email</th>
 
-
-
-        {% for line in ticket %}
           <tr>
-            <td>{{line[0]}}</td>
-            <td>{{line[1]}}</td>
-            <td>{{line[2]}}</td>
+            <td>{{ticket_info[0]}}</td>
+            <td>{{ticket_info[1]}}</td>
+            <td>{{ticket_info[2]}}</td>
+            <td>{{ticket_info[3]}}</td>
+            <td>{{ticket_info[4]}}</td>
           </tr>
-        {% endfor %}
+
       </table>
     {% endif %}
 
     <!-- flight info -->
+    {% if flight_info %}
+      <table>
+        <caption>Flight Information</caption>
+
+        <th>Airline</th>
+        <th>Flight No.</th>
+        <th>Departure</th>
+        <th>Arrival</th>
+        <th>Price</th>
+
+          <tr>
+            <td>{{flight_info[0]}}</td>
+            <td>{{flight_info[1]}}</td>
+            <td>{{flight_info[3]}}, <b>{{flight_info[2]}}</b>
+              <br>
+              {{flight_info[4]}}
+            </td>
+            <td>{{flight_info[6]}}, <b>{{flight_info[5]}}</b>
+              <br>
+              {{flight_info[7]}}
+            </td>
+            <td>{{flight_info[8]}}</td>
+          </tr>
+
+      </table>
+    {% endif %}
+
+
+    <!-- go back -->
     <form action="/customer_home">
       <input type="submit" value="Go Back Home">
     </form>
