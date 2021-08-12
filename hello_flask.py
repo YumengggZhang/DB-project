@@ -333,7 +333,7 @@ WHERE airline_name=\'{0}\' AND flight_num=\'{1}\'
         url = """/customer/purchase?airline=\'{0}\'&flight_num=\'{1}\'""".format(airline, flight_num)
         return redirect(url)
     error = 'We are sorry that there is no available seat on this flight. Please check later or purchase another one.'
-    return redirect(url_for('cviewAll'))
+    return redirect(url_for('cview_all'))
 
 
 @app.route('/customer/purchase', methods=['GET', 'POST'])
