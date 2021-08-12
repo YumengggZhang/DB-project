@@ -227,7 +227,7 @@ def registerAuth_customer():
         return redirect(url_for('login'))
 
 
-@app.route('/registerAuth_agent')
+@app.route('/registerAuth_agent', methods=['GET', 'POST'])
 def registerAuth_agent():
 
     email = request.form.get('email')
